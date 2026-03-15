@@ -839,10 +839,8 @@ function initContactForm() {
     form.classList.add('hidden');
     success.classList.remove('hidden');
     // ── שלח מייל דרך Web3Forms ──────────────────────────────
-    // צעד 1: קבל מפתח חינמי ב־ web3forms.com (רשום את המייל שלך שם)
-    // צעד 2: החלף את הטקסט 'YOUR_ACCESS_KEY' במפתח שקיבלת
-    const WEB3FORMS_KEY = 'YOUR_ACCESS_KEY';
-    if (WEB3FORMS_KEY !== 'YOUR_ACCESS_KEY') {
+    const WEB3FORMS_KEY = '70965c8e-4660-4630-9d07-a35fc74e1b29';
+    if (WEB3FORMS_KEY) {
       fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
