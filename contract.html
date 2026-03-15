@@ -88,13 +88,27 @@
     .tb-btn-primary:hover { background: #1a2f5e; }
     .tb-btn-outline { background: #fff; color: #0a1628; border: 1.5px solid #0a1628; }
     .tb-btn-outline:hover { background: #f0f4fc; }
+  /* Loading overlay */
+  #pdfLoading { display:none; position:fixed; inset:0; background:rgba(10,22,40,.75); z-index:9999; align-items:center; justify-content:center; flex-direction:column; gap:14px; color:#c9a84c; font-size:1.1rem; font-family:'Heebo',sans-serif; }
+  #pdfLoading.show { display:flex; }
+  .spinner { width:40px; height:40px; border:4px solid rgba(201,168,76,.3); border-top-color:#c9a84c; border-radius:50%; animation:spin .8s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
+<div id="pdfLoading"><div class="spinner"></div><span>מייצר PDF...</span></div>
+
 <div class="toolbar no-print">
-  <button class="tb-btn tb-btn-primary" onclick="window.print()">
-    🖨️ הדפס / שמור PDF
+  <button class="tb-btn tb-btn-primary" id="btnDownloadPdf">
+    📄 הורד PDF
+  </button>
+  <button class="tb-btn tb-btn-outline" id="btnSendClient">
+    ✉️ שלח ללקוח
+  </button>
+  <button class="tb-btn tb-btn-outline" onclick="window.print()">
+    🖨️ הדפס
   </button>
   <button class="tb-btn tb-btn-outline" onclick="window.close()">
     ✕ סגור
@@ -242,9 +256,19 @@
 
 <script>
 (function() {
-  const params    = new URLSearchParams(window.location.search);
-  const eventId   = params.get('id');
+  const params      = new URLSearchParams(window.location.search);
+  const eventId     = params.get('id');
+  const dataParam   = params.get('data');
   const STORAGE_KEY = 'yf_site_data';
+  const SITE_URL    = 'https://bot-sync-up.github.io/friedman-site';
+
+  // ── helpers to encode/decode Hebrew text safely in base64 ──
+  function encodeB64(obj) {
+    return btoa(unescape(encodeURIComponent(JSON.stringify(obj))));
+  }
+  function decodeB64(str) {
+    return JSON.parse(decodeURIComponent(escape(atob(str))));
+  }
 
   function hebDate(dateStr) {
     if (!dateStr) return '–';
@@ -270,17 +294,31 @@
   setText('contractDate', todayHeb + ' ' + todayGreg);
   setText('contractMadeDate', todayHeb);
 
-  if (!eventId) {
+  // ── load event from ?data= (client shareable link) or ?id= (admin localStorage) ──
+  let event, settings = {};
+
+  if (dataParam) {
+    try { event = decodeB64(dataParam); }
+    catch(e) {
+      document.querySelector('.contract-page').innerHTML += '<p style="color:red;text-align:center;padding:20px">קישור לא תקין</p>';
+      return;
+    }
+  } else if (eventId) {
+    try {
+      const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      event      = (data.events || []).find(e => String(e.id) === String(eventId));
+      settings   = data.settings || {};
+    } catch(e) {}
+    if (!event) {
+      document.querySelector('.contract-page').innerHTML += '<p style="color:red;text-align:center;padding:20px">שגיאה: אירוע לא נמצא</p>';
+      return;
+    }
+  } else {
     document.querySelector('.contract-page').innerHTML += '<p style="color:red;text-align:center;padding:20px">שגיאה: לא נמצאו נתוני אירוע</p>';
     return;
   }
 
   try {
-    const data  = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-    const event = (data.events || []).find(e => String(e.id) === String(eventId));
-    const settings = data.settings || {};
-
-    if (!event) { alert('אירוע לא נמצא'); return; }
 
     // Update contact details from settings
     if (settings.phone) setText('mgPhone', settings.phone);
@@ -403,6 +441,51 @@
     setText('ciDepositDeadline', depDeadline);
     setText('ciTotal', money(grandTotal));
     setText('ciBalance', money(balance > 0 ? balance : 0));
+
+    // ── כפתור הורד PDF ──────────────────────────────────────────
+    document.getElementById('btnDownloadPdf')?.addEventListener('click', function() {
+      const loading = document.getElementById('pdfLoading');
+      loading.classList.add('show');
+      const el  = document.querySelector('.contract-page');
+      const opt = {
+        margin:   [8, 8, 8, 8],
+        filename: `חוזה_${event.clientName || 'לקוח'}_${event.date || ''}.pdf`,
+        image:    { type: 'jpeg', quality: 0.97 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        jsPDF:    { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      };
+      html2pdf().set(opt).from(el).save().then(() => {
+        loading.classList.remove('show');
+      }).catch(() => {
+        loading.classList.remove('show');
+        alert('שגיאה ביצירת PDF – נסה הדפסה רגילה');
+      });
+    });
+
+    // ── כפתור שלח ללקוח ─────────────────────────────────────────
+    document.getElementById('btnSendClient')?.addEventListener('click', function() {
+      const clientEmail = event.clientEmail || '';
+      if (!clientEmail) {
+        alert('אין כתובת אימייל ללקוח.\nהוסף אימייל ללקוח בניהול האירועים ונסה שוב.');
+        return;
+      }
+      // Build shareable link (all data encoded in URL – works on any device)
+      const shareLink = `${SITE_URL}/contract.html?data=${encodeB64(event)}`;
+      const perfNames = (event.performers || []).map(p => p.name).filter(Boolean).join(', ') || event.artistName || '';
+      const subject   = encodeURIComponent(`חוזה הופעה – ${event.eventType || 'אירוע'} | ${event.date || ''}`);
+      const body      = encodeURIComponent(
+        `שלום ${event.clientName || ''},\n\n` +
+        `מצ"ב קישור לחוזה ההופעה שלנו:\n${shareLink}\n\n` +
+        `פרטי האירוע:\n` +
+        `• סוג: ${event.eventType || '–'}\n` +
+        `• תאריך: ${event.date || '–'}\n` +
+        `• מקום: ${(event.venue || '') + (event.city ? ', ' + event.city : '') || '–'}\n` +
+        (perfNames ? `• מבצעים: ${perfNames}\n` : '') +
+        `\nלפתיחת החוזה לחץ על הקישור → ניתן לשמור PDF מהדפדפן.\n\n` +
+        `לשאלות ניתן לפנות:\nיוחנן פרידמן | 052-711-3955 | mh4113633@gmail.com`
+      );
+      window.open(`mailto:${encodeURIComponent(clientEmail)}?subject=${subject}&body=${body}`);
+    });
 
   } catch(e) {
     console.error(e);
