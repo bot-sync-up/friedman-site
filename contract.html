@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>חוזה הופעה – יוחנן פרידמן</title>
+  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&family=Heebo:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Heebo', sans-serif;
+      direction: rtl;
+      font-size: 13px;
+      color: #1a1a2e;
+      background: #fff;
+      padding: 20px;
+    }
+    .contract-page {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 40px;
+      border: 1px solid #ddd;
+    }
+    /* Header */
+    .contract-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 3px solid #0a1628;
+      padding-bottom: 18px;
+      margin-bottom: 20px;
+    }
+    .company-name { font-family: 'Frank Ruhl Libre', serif; font-size: 1.6rem; font-weight: 700; color: #0a1628; line-height: 1.2; }
+    .company-sub  { font-size: .8rem; color: #c9a84c; letter-spacing: 1px; margin-top: 2px; }
+    .company-contact { font-size: .8rem; color: #555; line-height: 1.8; text-align: left; }
+    .contract-title-block { text-align: center; margin-bottom: 20px; }
+    .contract-title { font-family: 'Frank Ruhl Libre', serif; font-size: 1.4rem; font-weight: 700; color: #0a1628; border-bottom: 2px solid #c9a84c; display: inline-block; padding-bottom: 4px; }
+    .contract-meta { display: flex; justify-content: space-between; margin-top: 10px; font-size: .82rem; color: #555; }
+    /* Sections */
+    .section { margin-bottom: 18px; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; }
+    .section-head { background: #0a1628; color: #c9a84c; padding: 7px 14px; font-weight: 700; font-size: .85rem; letter-spacing: 1px; }
+    .section-body { padding: 14px; }
+    .row { display: grid; grid-template-columns: 150px 1fr; gap: 4px 12px; padding: 5px 0; border-bottom: 1px dotted #eee; }
+    .row:last-child { border-bottom: none; }
+    .lbl { font-weight: 700; color: #333; font-size: .82rem; }
+    .val { color: #1a1a2e; font-size: .85rem; }
+    /* Date display */
+    .date-hebrew { color: #0a1628; font-weight: 600; }
+    .date-greg   { color: #777; font-size: .82em; margin-right: 6px; }
+    /* Parties */
+    .parties-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .party-box { border: 1px solid #ddd; border-radius: 6px; padding: 12px; }
+    .party-title { font-weight: 700; color: #0a1628; font-size: .88rem; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid #eee; }
+    .party-row { display: flex; gap: 8px; margin-bottom: 5px; font-size: .82rem; }
+    .party-lbl { font-weight: 600; color: #555; min-width: 60px; }
+    /* Financial table */
+    .fin-table { width: 100%; border-collapse: collapse; margin-top: 4px; }
+    .fin-table th { background: #f0f4fc; padding: 7px 10px; text-align: right; font-size: .8rem; color: #0a1628; border: 1px solid #ddd; }
+    .fin-table td { padding: 7px 10px; border: 1px solid #ddd; font-size: .82rem; }
+    .fin-table tr.subtotal td { background: #f8f0e0; }
+    .fin-table tr.total-row td { font-weight: 700; background: #0a1628; color: #c9a84c; font-size: .92rem; }
+    .fin-table tr.deposit-row td { background: #f0f8ff; }
+    .fin-table tr.balance-row td { font-weight: 700; background: #eafaf1; }
+    .highlight { color: #c9a84c; font-weight: 700; }
+    /* Terms */
+    .terms-list { padding: 0; list-style: none; }
+    .terms-list li { padding: 5px 0; padding-right: 18px; position: relative; font-size: .82rem; color: #333; line-height: 1.6; border-bottom: 1px dotted #eee; }
+    .terms-list li:last-child { border-bottom: none; }
+    .terms-list li::before { content: '•'; position: absolute; right: 4px; color: #c9a84c; }
+    /* Signatures */
+    .sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 8px; }
+    .sig-box { text-align: center; }
+    .sig-line { border-top: 1.5px solid #0a1628; margin: 40px 10px 8px; }
+    .sig-name { font-weight: 700; font-size: .85rem; }
+    .sig-date  { font-size: .75rem; color: #777; margin-top: 4px; }
+    /* Footer */
+    .contract-footer { margin-top: 20px; padding-top: 10px; border-top: 1px solid #ddd; text-align: center; font-size: .72rem; color: #999; }
+    /* Print */
+    @media print {
+      body { padding: 0; }
+      .contract-page { border: none; padding: 20px; max-width: 100%; }
+      .no-print { display: none !important; }
+    }
+    /* Toolbar */
+    .toolbar { max-width: 800px; margin: 0 auto 16px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .tb-btn { padding: 10px 22px; border-radius: 8px; font-size: .9rem; font-weight: 600; cursor: pointer; border: none; font-family: 'Heebo', sans-serif; transition: .2s; }
+    .tb-btn-primary { background: #0a1628; color: #c9a84c; }
+    .tb-btn-primary:hover { background: #1a2f5e; }
+    .tb-btn-outline { background: #fff; color: #0a1628; border: 1.5px solid #0a1628; }
+    .tb-btn-outline:hover { background: #f0f4fc; }
+  </style>
+</head>
+<body>
+
+<div class="toolbar no-print">
+  <button class="tb-btn tb-btn-primary" onclick="window.print()">
+    🖨️ הדפס / שמור PDF
+  </button>
+  <button class="tb-btn tb-btn-outline" onclick="window.close()">
+    ✕ סגור
+  </button>
+</div>
+
+<div class="contract-page">
+
+  <!-- Header -->
+  <div class="contract-header">
+    <div>
+      <div class="company-name">יוחנן פרידמן</div>
+      <div class="company-sub">ניהול אמנים חסידיים</div>
+    </div>
+    <div class="company-contact" id="companyContact">
+      טל׳: 052-711-3955<br>
+      mh4113633@gmail.com<br>
+      <span id="contractDate"></span>
+    </div>
+  </div>
+
+  <!-- Title -->
+  <div class="contract-title-block">
+    <div class="contract-title">חוזה הופעה – הסכם בין הצדדים</div>
+    <div class="contract-meta">
+      <span>מספר חוזה: <strong id="contractNum">#0001</strong></span>
+      <span>תאריך הפקה: <strong id="contractMadeDate"></strong></span>
+    </div>
+  </div>
+
+  <!-- Parties -->
+  <div class="section">
+    <div class="section-head">הצדדים להסכם</div>
+    <div class="section-body">
+      <div class="parties-grid">
+        <div class="party-box">
+          <div class="party-title">צד א׳ – המנהל / הסוכן</div>
+          <div class="party-row"><span class="party-lbl">שם:</span> יוחנן פרידמן</div>
+          <div class="party-row"><span class="party-lbl">טלפון:</span> <span id="mgPhone">052-711-3955</span></div>
+          <div class="party-row"><span class="party-lbl">אימייל:</span> <span id="mgEmail">mh4113633@gmail.com</span></div>
+          <div class="party-row"><span class="party-lbl">מבצעים:</span> <strong id="cArtistName">–</strong></div>
+        </div>
+        <div class="party-box">
+          <div class="party-title">צד ב׳ – הלקוח</div>
+          <div class="party-row"><span class="party-lbl">שם:</span> <span id="cClientName">–</span></div>
+          <div class="party-row"><span class="party-lbl">טלפון:</span> <span id="cClientPhone">–</span></div>
+          <div class="party-row"><span class="party-lbl">אימייל:</span> <span id="cClientEmail">–</span></div>
+          <div class="party-row"><span class="party-lbl">כתובת:</span> <span id="cClientAddress">–</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Event Details -->
+  <div class="section">
+    <div class="section-head">פרטי האירוע</div>
+    <div class="section-body">
+      <div class="row"><span class="lbl">סוג האירוע:</span><span class="val" id="cEventType">–</span></div>
+      <div class="row">
+        <span class="lbl">תאריך האירוע:</span>
+        <span class="val">
+          <span class="date-hebrew" id="cEventDateHeb">–</span>
+          <span class="date-greg" id="cEventDateGreg"></span>
+        </span>
+      </div>
+      <div class="row"><span class="lbl">שעות ההופעה:</span><span class="val" id="cEventHours">–</span></div>
+      <div class="row"><span class="lbl">מקום האירוע:</span><span class="val" id="cEventVenue">–</span></div>
+      <div class="row"><span class="lbl">עיר:</span><span class="val" id="cEventCity">–</span></div>
+      <div class="row"><span class="lbl">הערות מיוחדות:</span><span class="val" id="cNotes">–</span></div>
+    </div>
+  </div>
+
+  <!-- Financial -->
+  <div class="section">
+    <div class="section-head">תנאים כספיים</div>
+    <div class="section-body">
+      <table class="fin-table">
+        <thead>
+          <tr>
+            <th>מבצע / פריט</th>
+            <th>פרטים</th>
+            <th>סכום</th>
+          </tr>
+        </thead>
+        <tbody id="finTableBody">
+          <!-- populated by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Terms -->
+  <div class="section">
+    <div class="section-head">תנאים כלליים</div>
+    <div class="section-body">
+      <ul class="terms-list" id="termsList">
+        <!-- populated by JS -->
+      </ul>
+    </div>
+  </div>
+
+  <!-- Signatures -->
+  <div class="section">
+    <div class="section-head">חתימות</div>
+    <div class="section-body">
+      <p style="font-size:.82rem;color:#555;margin-bottom:16px">
+        הצדדים המפורטים לעיל מצהירים כי קראו את כל תנאי חוזה זה, הבינו אותם
+        ומסכימים להם במלואם. החוזה ייכנס לתוקף עם חתימת שני הצדדים.
+      </p>
+      <div class="sig-grid">
+        <div class="sig-box">
+          <div class="sig-line"></div>
+          <div class="sig-name">יוחנן פרידמן – מנהל האמנים</div>
+          <div class="sig-date">תאריך: ____________</div>
+        </div>
+        <div class="sig-box">
+          <div class="sig-line"></div>
+          <div class="sig-name" id="sigClientName">הלקוח: ____________</div>
+          <div class="sig-date">תאריך: ____________</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Client Copy -->
+  <div class="section">
+    <div class="section-head">דף מידע ללקוח – שמור לעצמך!</div>
+    <div class="section-body">
+      <div class="row"><span class="lbl">מבצעים שהוזמנו:</span><span class="val" id="ciArtist">–</span></div>
+      <div class="row"><span class="lbl">תאריך האירוע:</span><span class="val" id="ciDate">–</span></div>
+      <div class="row"><span class="lbl">שעות ההופעה:</span><span class="val" id="ciHours">–</span></div>
+      <div class="row"><span class="lbl">כתובת האולם:</span><span class="val" id="ciVenue">–</span></div>
+      <div class="row"><span class="lbl">מקדמה לשלם:</span><span class="val"><strong id="ciDeposit">–</strong> ₪ עד <span id="ciDepositDeadline">–</span></span></div>
+      <div class="row"><span class="lbl">סה"כ לתשלום:</span><span class="val"><strong id="ciTotal">–</strong> ₪</span></div>
+      <div class="row"><span class="lbl">יתרה ביום האירוע:</span><span class="val"><strong id="ciBalance">–</strong> ₪</span></div>
+      <div class="row"><span class="lbl">ליצירת קשר:</span><span class="val" id="ciContact">יוחנן פרידמן | 052-711-3955 | mh4113633@gmail.com</span></div>
+    </div>
+  </div>
+
+  <div class="contract-footer" id="contractFooter">
+    יוחנן פרידמן – ניהול אמנים חסידיים | 052-711-3955 | mh4113633@gmail.com<br>
+    מסמך זה הופק אוטומטית ממערכת ניהול האמנים
+  </div>
+</div>
+
+<script>
+(function() {
+  const params    = new URLSearchParams(window.location.search);
+  const eventId   = params.get('id');
+  const STORAGE_KEY = 'yf_site_data';
+
+  function hebDate(dateStr) {
+    if (!dateStr) return '–';
+    try {
+      const d = new Date(dateStr + 'T12:00:00');
+      return d.toLocaleDateString('he-IL-u-ca-hebrew', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+    } catch(e) { return dateStr; }
+  }
+  function gregDate(dateStr) {
+    if (!dateStr) return '';
+    try {
+      const d = new Date(dateStr + 'T12:00:00');
+      return '(' + d.toLocaleDateString('he-IL', { day: 'numeric', month: 'long', year: 'numeric' }) + ')';
+    } catch(e) { return ''; }
+  }
+  function money(n) { return n ? Number(n).toLocaleString('he-IL') : '–'; }
+  function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val || '–'; }
+
+  // Today's date (dual)
+  const todayStr  = new Date().toISOString().split('T')[0];
+  const todayHeb  = hebDate(todayStr);
+  const todayGreg = gregDate(todayStr);
+  setText('contractDate', todayHeb + ' ' + todayGreg);
+  setText('contractMadeDate', todayHeb);
+
+  if (!eventId) {
+    document.querySelector('.contract-page').innerHTML += '<p style="color:red;text-align:center;padding:20px">שגיאה: לא נמצאו נתוני אירוע</p>';
+    return;
+  }
+
+  try {
+    const data  = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    const event = (data.events || []).find(e => String(e.id) === String(eventId));
+    const settings = data.settings || {};
+
+    if (!event) { alert('אירוע לא נמצא'); return; }
+
+    // Update contact details from settings
+    if (settings.phone) setText('mgPhone', settings.phone);
+    if (settings.email) setText('mgEmail', settings.email);
+    setText('contractFooter',
+      `יוחנן פרידמן – ניהול אמנים חסידיים | ${settings.phone||'052-711-3955'} | ${settings.email||'mh4113633@gmail.com'}\nמסמך זה הופק אוטומטית ממערכת ניהול האמנים`);
+    setText('ciContact', `יוחנן פרידמן | ${settings.phone||'052-711-3955'} | ${settings.email||'mh4113633@gmail.com'}`);
+
+    // Contract number
+    setText('contractNum', '#' + String(event.id).padStart(4, '0'));
+
+    // Performers
+    const performers = event.performers || [];
+    const perfNames  = performers.map(p => p.name).filter(Boolean).join(', ') || event.artistName || '–';
+
+    // Parties
+    setText('cArtistName', perfNames);
+    setText('cClientName', event.clientName);
+    setText('cClientPhone', event.clientPhone);
+    setText('cClientEmail', event.clientEmail || '–');
+    setText('cClientAddress', event.clientAddress || '–');
+    setText('sigClientName', 'הלקוח: ' + (event.clientName || '____________'));
+
+    // Event details (dual dates)
+    setText('cEventType', event.eventType);
+    document.getElementById('cEventDateHeb').textContent = hebDate(event.date);
+    document.getElementById('cEventDateGreg').textContent = gregDate(event.date);
+    setText('cEventHours', (event.startTime || '') + ' – ' + (event.endTime || '') + (event.baseHours ? ' (' + event.baseHours + ' שעות)' : ''));
+    setText('cEventVenue', event.venue || '–');
+    setText('cEventCity', event.city || '–');
+    setText('cNotes', event.notes || 'אין הערות מיוחדות');
+
+    // ---- FINANCIAL TABLE ----
+    const tbody = document.getElementById('finTableBody');
+    let grandTotal = 0;
+    const typeLabels = { singer:'זמר', keyboardist:'קלידן', musician:'נגן/כלי' };
+    let rows = '';
+
+    if (performers.length) {
+      performers.forEach(p => {
+        const fee = Number(p.fee) || 0;
+        grandTotal += fee;
+        rows += `<tr>
+          <td>${typeLabels[p.type]||p.type}: <strong>${p.name||'–'}</strong></td>
+          <td>${p.hours ? p.hours + ' שעות' : '–'}</td>
+          <td><span class="highlight">${money(fee)}</span> ₪</td>
+        </tr>`;
+        if (p.chuppah) {
+          const cprice = Number(p.chuppahPrice) || 0;
+          grandTotal += cprice;
+          rows += `<tr class="subtotal">
+            <td style="padding-right:24px">↳ תוספת חופה</td>
+            <td>–</td>
+            <td><span class="highlight">${money(cprice)}</span> ₪</td>
+          </tr>`;
+        }
+      });
+    } else if (event.basePrice) {
+      // Legacy single artist
+      grandTotal = Number(event.basePrice) || 0;
+      rows += `<tr>
+        <td>${event.artistName || 'אמן'}</td>
+        <td>${event.baseHours || '?'} שעות</td>
+        <td><span class="highlight">${money(event.basePrice)}</span> ₪</td>
+      </tr>`;
+      if (event.overtimeHourPrice) {
+        rows += `<tr>
+          <td>שעות נוספות (מעל הבסיס)</td>
+          <td>–</td>
+          <td>${money(event.overtimeHourPrice)} ₪/שעה</td>
+        </tr>`;
+      }
+    }
+
+    // Grand total row
+    rows += `<tr class="total-row">
+      <td colspan="2" style="text-align:right"><strong>סה"כ שכר אמנים</strong></td>
+      <td><strong>${money(grandTotal)}</strong> ₪</td>
+    </tr>`;
+
+    // Deposit row
+    const deposit = Number(event.depositAmount) || 0;
+    const depDeadline = event.depositDeadline ? hebDate(event.depositDeadline) + ' ' + gregDate(event.depositDeadline) : '–';
+    rows += `<tr class="deposit-row">
+      <td>מקדמה לתשלום</td>
+      <td>עד: ${depDeadline}</td>
+      <td><span class="highlight">${money(deposit)}</span> ₪</td>
+    </tr>`;
+
+    // Balance
+    const balance = grandTotal - deposit;
+    rows += `<tr class="balance-row">
+      <td colspan="2" style="text-align:right"><strong>יתרה לתשלום ביום האירוע</strong></td>
+      <td><strong>${money(balance > 0 ? balance : 0)}</strong> ₪</td>
+    </tr>`;
+
+    tbody.innerHTML = rows;
+
+    // ---- CONTRACT TERMS ----
+    const termsList = document.getElementById('termsList');
+    const terms = settings.contractTerms || [
+      'ביטול האירוע על ידי הלקוח עד 30 יום לפני האירוע – המקדמה אינה מוחזרת.',
+      'ביטול האירוע על ידי הלקוח בפחות מ-30 יום – 50% מסכום החוזה המלא.',
+      'ביטול האירוע על ידי הלקוח בפחות מ-7 ימים – 100% מסכום החוזה המלא.',
+      'שעות ההופעה הן שעות נקיות – לא כוללות הפסקות ארוחות.',
+      'האמן יגיע לאתר האירוע לפחות 45 דקות לפני שעת תחילת ההופעה.',
+      'כל שינוי בפרטי האירוע (תאריך, מקום, שעות) מחייב הסכמה בכתב מראש.',
+      'הסכום כולל ציוד קול בסיסי. ציוד מיוחד ייגבה בנפרד בהסכמה מראש.',
+      'תשלום מלא ביום האירוע לפני תחילת ההופעה.',
+    ];
+    termsList.innerHTML = terms.map(t => `<li>${t}</li>`).join('');
+
+    // ---- CLIENT COPY ----
+    setText('ciArtist', perfNames);
+    const dualEventDate = hebDate(event.date) + ' ' + gregDate(event.date);
+    setText('ciDate', dualEventDate);
+    setText('ciHours', (event.startTime || '') + ' – ' + (event.endTime || ''));
+    setText('ciVenue', (event.venue || '') + (event.city ? ', ' + event.city : ''));
+    setText('ciDeposit', money(deposit));
+    setText('ciDepositDeadline', depDeadline);
+    setText('ciTotal', money(grandTotal));
+    setText('ciBalance', money(balance > 0 ? balance : 0));
+
+  } catch(e) {
+    console.error(e);
+  }
+})();
+</script>
+</body>
+</html>

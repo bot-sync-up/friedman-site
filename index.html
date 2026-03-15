@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>יוחנן פרידמן – ניהול אמנים | הפנים של המוזיקה החסידית</title>
+  <meta name="description" content="יוחנן פרידמן – ניהול אמנים חסידיים ברמה הגבוהה ביותר. זמרים ולהקות לאירועים חרדיים." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Frank+Ruhl+Libre:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav id="navbar" class="navbar">
+  <div class="nav-container">
+    <div class="nav-logo">
+      <span class="logo-main" id="logoMain">יוחנן פרידמן</span>
+      <span class="logo-sub" id="logoSub">ניהול אמנים</span>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="תפריט">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-menu" id="navMenu">
+      <a href="#hero" class="nav-link" data-i18n="nav.home">בית</a>
+      <a href="#about" class="nav-link" data-i18n="nav.about">אודות</a>
+      <a href="#artists" class="nav-link" data-i18n="nav.artists">האמנים</a>
+      <a href="#videos" class="nav-link">סרטונים</a>
+      <a href="#gallery" class="nav-link" data-i18n="nav.gallery">גלריה</a>
+      <a href="#recordings" class="nav-link">הקלטות</a>
+      <a href="#testimonials" class="nav-link">עדויות</a>
+      <a href="#contact" class="nav-link" data-i18n="nav.contact">צרו קשר</a>
+      <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="he">עב</button>
+        <button class="lang-btn" data-lang="yi">יי</button>
+        <button class="lang-btn" data-lang="en">EN</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section id="hero" class="hero">
+  <div class="hero-bg">
+    <div class="stars" id="stars"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge fade-in-up" style="animation-delay:.1s">
+      <i class="fas fa-music"></i>
+      <span data-i18n="hero.badge">ניהול אמנים חסידיים</span>
+    </div>
+    <h1 class="hero-title fade-in-up" id="heroTitle" style="animation-delay:.25s">יוחנן פרידמן</h1>
+    <h2 class="hero-subtitle fade-in-up" id="heroSubtitle" style="animation-delay:.35s">ניהול אמנים</h2>
+    <div class="hero-divider fade-in-up" style="animation-delay:.45s">
+      <span class="div-line"></span>
+      <span class="div-icon"><i class="fas fa-star-of-david"></i></span>
+      <span class="div-line"></span>
+    </div>
+    <p class="hero-tagline fade-in-up" id="heroTagline" style="animation-delay:.55s">הפנים של המוזיקה החסידית</p>
+    <div class="hero-cta fade-in-up" style="animation-delay:.7s">
+      <a href="#artists" class="btn btn-gold" data-i18n="hero.cta1">הכירו את האמנים</a>
+      <a href="#contact" class="btn btn-outline" data-i18n="hero.cta2">צרו קשר</a>
+    </div>
+  </div>
+  <a href="#about" class="hero-scroll">
+    <i class="fas fa-chevron-down"></i>
+  </a>
+</section>
+
+<!-- ===== ABOUT ===== -->
+<section id="about" class="about section-light">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-visual reveal">
+        <div class="about-frame">
+          <div class="about-avatar">
+            <i class="fas fa-user-tie"></i>
+            <span>י.פ</span>
+          </div>
+          <div class="frame-corner tl"></div>
+          <div class="frame-corner tr"></div>
+          <div class="frame-corner bl"></div>
+          <div class="frame-corner br"></div>
+        </div>
+        <div class="about-stats">
+          <div class="stat reveal" style="--d:.1s">
+            <span class="stat-num" id="statArtists">15+</span>
+            <span class="stat-lbl" data-i18n="about.stat1">אמנים מיוצגים</span>
+          </div>
+          <div class="stat reveal" style="--d:.2s">
+            <span class="stat-num">500+</span>
+            <span class="stat-lbl" data-i18n="about.stat2">אירועים בשנה</span>
+          </div>
+          <div class="stat reveal" style="--d:.3s">
+            <span class="stat-num">20+</span>
+            <span class="stat-lbl" data-i18n="about.stat3">שנות ניסיון</span>
+          </div>
+        </div>
+      </div>
+      <div class="about-text reveal">
+        <span class="section-tag" data-i18n="about.tag">הסיפור שלנו</span>
+        <h2 class="section-title dark" id="aboutTitle">יוחנן פרידמן –<br>מאחורי המוזיקה</h2>
+        <div class="gold-divider"></div>
+        <div id="aboutContent">
+          <p>כבר למעלה מעשרים שנה, יוחנן פרידמן עומד בלב עולם המוזיקה החסידית. גדל בביתו של אדמו"ר מוקף בניגון ותפילה, יוחנן הבין מוקדם שהמוזיקה היהודית היא נשמת האומה – ושמגיעים לה מייצגים ראויים.</p>
+          <p>לאחר שנים של עבודה מאחורי הקלעים עם גדולי הזמרים החסידיים, הקים יוחנן את סוכנות הניהול שלו, המאחדת תחת קורת גג אחת את הכישרונות הגדולים ביותר של הדור.</p>
+          <p>היום, "יוחנן פרידמן – ניהול אמנים" היא הכתובת הראשונה לכל מי שמבקש להביא את הפנים של המוזיקה החסידית לאירוע שלו.</p>
+        </div>
+        <a href="#contact" class="btn btn-navy mt-4" data-i18n="about.cta">בואו נדבר</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ARTISTS ===== -->
+<section id="artists" class="artists section-dark">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag gold" data-i18n="artists.tag">הרוסטר שלנו</span>
+      <h2 class="section-title white" data-i18n="artists.title">האמנים שלנו</h2>
+      <p class="section-desc" data-i18n="artists.desc">כישרון, אמונה ומקצועיות – שלישייה שאי אפשר להפריד</p>
+      <div class="gold-divider center"></div>
+    </div>
+    <div class="artist-tabs-wrap reveal">
+      <button class="artist-tab active" data-cat="singer"><i class="fas fa-microphone-alt"></i> זמרים</button>
+      <button class="artist-tab" data-cat="keyboardist"><i class="fas fa-music"></i> קלידנים</button>
+      <button class="artist-tab" data-cat="musician"><i class="fas fa-guitar"></i> נגנים</button>
+    </div>
+    <div class="artists-grid" id="artistsGrid">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ===== GALLERY ===== -->
+<section id="gallery" class="gallery section-light">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag" data-i18n="gallery.tag">רגעים מיוחדים</span>
+      <h2 class="section-title dark" data-i18n="gallery.title">גלריה</h2>
+      <div class="gold-divider center"></div>
+    </div>
+    <div class="gallery-filters reveal">
+      <button class="filter-btn active" data-filter="all" data-i18n="gallery.all">הכל</button>
+      <button class="filter-btn" data-filter="events" data-i18n="gallery.events">אירועים</button>
+      <button class="filter-btn" data-filter="studio" data-i18n="gallery.studio">סטודיו</button>
+    </div>
+    <div class="gallery-grid" id="galleryGrid">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ===== VIDEOS ===== -->
+<section id="videos" class="videos section-light">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag">הופעות ורגעים</span>
+      <h2 class="section-title dark">סרטונים</h2>
+      <div class="gold-divider center"></div>
+    </div>
+    <div class="videos-grid" id="videosGrid">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ===== NEWS ===== -->
+<section id="news" class="news section-dark">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag gold" data-i18n="news.tag">עדכונים ואירועים</span>
+      <h2 class="section-title white" data-i18n="news.title">חדשות</h2>
+      <div class="gold-divider center"></div>
+    </div>
+    <div class="news-grid" id="newsGrid">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ===== TESTIMONIALS ===== -->
+<section id="testimonials" class="testimonials section-light">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag">לקוחות מרוצים</span>
+      <h2 class="section-title dark">עדויות ומכתבי המלצה</h2>
+      <div class="gold-divider center"></div>
+    </div>
+    <div class="testimonials-grid" id="testimonialsGrid">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ===== RECORDINGS ===== -->
+<section id="recordings" class="recordings section-dark">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag gold">ארכיון הקלטות</span>
+      <h2 class="section-title white">הורדת הקלטות</h2>
+      <p class="section-desc">הקלטות מלאות מאירועים נבחרים – לחץ להורדה מגוגל דרייב</p>
+      <div class="gold-divider center"></div>
+    </div>
+    <div class="recordings-grid" id="recordingsGrid">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section id="contact" class="contact section-light">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <span class="section-tag" data-i18n="contact.tag">בואו נדבר</span>
+        <h2 class="section-title dark" data-i18n="contact.title">צרו קשר</h2>
+        <div class="gold-divider"></div>
+        <p class="contact-intro" data-i18n="contact.intro">רוצים להזמין אמן לאירוע שלכם?<br>השאירו פרטים ונחזור אליכם בהקדם.</p>
+        <div class="contact-details">
+          <a href="tel:0527113955" class="contact-item">
+            <div class="ci-icon"><i class="fas fa-phone"></i></div>
+            <div class="ci-text">
+              <span data-i18n="contact.phoneLbl">טלפון</span>
+              <strong id="contactPhone">052-711-3955</strong>
+            </div>
+          </a>
+          <a href="mailto:mh4113633@gmail.com" class="contact-item">
+            <div class="ci-icon"><i class="fas fa-envelope"></i></div>
+            <div class="ci-text">
+              <span data-i18n="contact.emailLbl">אימייל</span>
+              <strong id="contactEmail">mh4113633@gmail.com</strong>
+            </div>
+          </a>
+        </div>
+      </div>
+      <div class="contact-form-wrap reveal">
+        <form id="contactForm" class="contact-form" novalidate>
+          <div class="form-group">
+            <label for="cName" data-i18n="form.name">שם מלא *</label>
+            <input type="text" id="cName" name="name" required placeholder="הכנס שם מלא..." />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cPhone" data-i18n="form.phone">טלפון *</label>
+              <input type="tel" id="cPhone" name="phone" required placeholder="05X-XXXXXXX" />
+            </div>
+            <div class="form-group">
+              <label for="cEmail" data-i18n="form.email">אימייל</label>
+              <input type="email" id="cEmail" name="email" placeholder="your@email.com" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cEvent" data-i18n="form.eventType">סוג האירוע</label>
+              <select id="cEvent" name="eventType">
+                <option value="">בחר סוג אירוע...</option>
+                <option value="חתונה">חתונה</option>
+                <option value="בר מצוה">בר מצוה</option>
+                <option value="הילולה">הילולה</option>
+                <option value="שמחת בית השואבה">שמחת בית השואבה</option>
+                <option value="שמחה כללית">שמחה כללית</option>
+                <option value="אחר">אחר</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="cArtist" data-i18n="form.artist">אמן מבוקש</label>
+              <select id="cArtist" name="artist">
+                <option value="">בחר אמן...</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cDate">תאריך האירוע</label>
+              <input type="date" id="cDate" name="eventDate" />
+            </div>
+            <div class="form-group">
+              <label for="cVenue">מקום האירוע</label>
+              <input type="text" id="cVenue" name="venue" placeholder="שם האולם / עיר..." />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="cMsg" data-i18n="form.message">הודעה</label>
+            <textarea id="cMsg" name="message" rows="3" placeholder="פרטים נוספים..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-navy btn-full" data-i18n="form.submit">
+            <i class="fas fa-paper-plane"></i> שלח פנייה
+          </button>
+        </form>
+        <div id="formSuccess" class="form-success hidden">
+          <i class="fas fa-check-circle"></i>
+          <h3 data-i18n="form.successTitle">תודה! קיבלנו את פנייתך</h3>
+          <p data-i18n="form.successText">נחזור אליך בהקדם האפשרי</p>
+          <button class="btn btn-navy mt-3" id="resetForm">פנייה חדשה</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="footer-logo-main">יוחנן פרידמן</span>
+        <span class="footer-logo-sub">ניהול אמנים</span>
+        <p class="footer-tagline" id="footerTagline">הפנים של המוזיקה החסידית</p>
+      </div>
+      <div class="footer-links">
+        <h4 data-i18n="footer.links">ניווט מהיר</h4>
+        <ul>
+          <li><a href="#hero" data-i18n="nav.home">בית</a></li>
+          <li><a href="#about" data-i18n="nav.about">אודות</a></li>
+          <li><a href="#artists" data-i18n="nav.artists">האמנים</a></li>
+          <li><a href="#gallery" data-i18n="nav.gallery">גלריה</a></li>
+          <li><a href="#news" data-i18n="nav.news">חדשות</a></li>
+          <li><a href="#testimonials">עדויות</a></li>
+          <li><a href="#contact" data-i18n="nav.contact">צרו קשר</a></li>
+        </ul>
+      </div>
+      <div class="footer-contact">
+        <h4 data-i18n="footer.contact">יצירת קשר</h4>
+        <p><i class="fas fa-phone"></i> <a href="tel:0527113955">052-711-3955</a></p>
+        <p><i class="fas fa-envelope"></i> <a href="mailto:mh4113633@gmail.com">mh4113633@gmail.com</a></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; <span id="footerYear">2025</span> יוחנן פרידמן ניהול אמנים. כל הזכויות שמורות.</p>
+      <a href="admin.html" class="admin-link"><i class="fas fa-lock"></i> כניסת מנהל</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== ARTIST PROFILE MODAL ===== -->
+<div id="artistProfileModal" class="ap-modal hidden">
+  <div class="ap-overlay" id="artistProfileOverlay"></div>
+  <div class="ap-box">
+    <button class="ap-close" id="artistProfileClose"><i class="fas fa-times"></i></button>
+    <div id="profileContent"></div>
+  </div>
+</div>
+
+<!-- ===== LIGHTBOX ===== -->
+<div id="lightbox" class="lightbox hidden">
+  <div class="lb-overlay" id="lbOverlay"></div>
+  <div class="lb-content">
+    <button class="lb-close" id="lbClose"><i class="fas fa-times"></i></button>
+    <img id="lbImg" src="" alt="" />
+    <p id="lbCaption"></p>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
