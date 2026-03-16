@@ -508,6 +508,7 @@ function renderEventsList() {
       </div>
       <span class="status-badge status-${esc(st)}">${STATUS_LABELS[st]||st}</span>
       <div class="li-actions">
+        <button class="icon-btn" onclick="openSendEmailModal(${e.id})" title="שלח מייל" style="color:#c9a84c"><i class="fas fa-paper-plane"></i></button>
         <button class="contract-btn" onclick="openContract(${e.id})" title="הדפס חוזה"><i class="fas fa-file-contract"></i> חוזה</button>
         <button class="icon-btn" onclick="editEvent(${e.id})" title="עריכה"><i class="fas fa-pen"></i></button>
         <button class="icon-btn delete" onclick="deleteEvent(${e.id})" title="מחיקה"><i class="fas fa-trash"></i></button>
@@ -563,35 +564,152 @@ function openContract(id) {
   window.open(`contract.html?id=${id}`, '_blank', 'width=900,height=700,scrollbars=yes');
 }
 
-// Email notification when event is confirmed / done
+// ══════════════════════════════════════════════════
+//  EmailJS – שליחת מיילים אוטומטית
+// ══════════════════════════════════════════════════
+const EJS_SERVICE  = 'service_yz27fsq';
+const EJS_TEMPLATE = 'template_04vndhk';
+const EJS_KEY      = 'J6X3ei_YFl9y9n7bj';
+
+function initEmailJS() {
+  if (typeof emailjs !== 'undefined') {
+    emailjs.init({ publicKey: EJS_KEY });
+  }
+}
+
+function sendEmail(params) {
+  if (typeof emailjs === 'undefined') {
+    toast('שירות המייל לא נטען', 'error');
+    return Promise.reject(new Error('emailjs not loaded'));
+  }
+  return emailjs.send(EJS_SERVICE, EJS_TEMPLATE, params)
+    .then(() => toast(`✓ מייל נשלח ל-${params.to_name || params.to_email}`, 'success'))
+    .catch(err => {
+      console.error('EmailJS error:', err);
+      toast(`שגיאה בשליחת מייל: ${err.text || 'נסה שנית'}`, 'error');
+      throw err;
+    });
+}
+
+function buildEventEmailParams(ev, toEmail, toName, customMsg) {
+  const dateHeb  = hebrewDate(ev.date) || '';
+  const dateGreg = ev.date || '';
+  const dateStr  = dateHeb && dateGreg ? `${dateHeb}  (${dateGreg})` : (dateHeb || dateGreg || '–');
+  const timeStr  = ev.startTime ? `${ev.startTime}${ev.endTime ? '–' + ev.endTime : ''}` : '–';
+  const venueStr = [ev.venue, ev.city].filter(Boolean).join(', ') || '–';
+  const base     = window.location.href.replace(/[^/]*$/, '');
+  return {
+    to_email:      toEmail,
+    to_name:       toName,
+    subject:       `אישור אירוע: ${ev.eventType||''} – ${ev.clientName||''} | ${dateStr}`,
+    message:       customMsg || 'האירוע אושר! להלן הפרטים המלאים. לחיצה על הכפתור תפתח את החוזה.',
+    event_type:    ev.eventType  || '–',
+    event_date:    dateStr,
+    event_time:    timeStr,
+    event_venue:   venueStr,
+    contract_link: `${base}contract.html?id=${ev.id}`,
+  };
+}
+
 function notifyEventParties(ev) {
   const d = DB.get();
-  // Collect artist emails from performers
-  const artistEmails = (ev.performers||[]).map(p => {
-    if (!p.artistId) return null;
-    const a = (d.artists||[]).find(x => x.id === p.artistId);
-    return a?.email || null;
-  }).filter(Boolean);
+  let count = 0;
+  // שלח לכל אמן בנפרד
+  (ev.performers || []).forEach(p => {
+    if (!p.artistId) return;
+    const artist = (d.artists || []).find(a => a.id === p.artistId);
+    if (!artist?.email) return;
+    const params = buildEventEmailParams(ev, artist.email, artist.name,
+      `הנך מוזמן להופיע באירוע הבא. להלן פרטי האירוע המאושר.`
+    );
+    params.subject = `הזמנה להופעה: ${ev.eventType||''} | ${params.event_date}`;
+    sendEmail(params);
+    count++;
+  });
+  // שלח ללקוח
+  if (ev.clientEmail) {
+    sendEmail(buildEventEmailParams(ev, ev.clientEmail, ev.clientName || 'לקוח יקר',
+      'האירוע שלך אושר! לחיצה על הכפתור תפתח את החוזה לצפייה והורדה.'
+    ));
+    count++;
+  }
+  if (!count) toast('לא נמצאו כתובות מייל – בדוק שיש מייל ללקוח ולאמנים', 'info');
+}
 
-  const subject  = encodeURIComponent(`אישור אירוע: ${ev.eventType||''} – ${ev.clientName||''} – ${hebrewDate(ev.date)}`);
-  const perfList = (ev.performers||[]).map(p =>
-    `• ${p.name||''}${p.type==='keyboardist'&&p.chuppah?' (+ חופה)':''} – ${p.fee?Number(p.fee).toLocaleString('he-IL')+' ₪':''}${p.notes?' | '+p.notes:''}`
-  ).join('\n');
-  const body = encodeURIComponent(
-    `שלום,\n\nלהלן פרטי האירוע המאושר:\n\n` +
-    `סוג: ${ev.eventType||''}\nתאריך: ${hebrewDate(ev.date)} (${ev.date||''})\n` +
-    `שעות: ${ev.startTime||''}–${ev.endTime||''}\nאולם: ${ev.venue||''}, ${ev.city||''}\n\n` +
-    `מבצעים:\n${perfList||'–'}\n\n` +
-    `מקדמה: ${ev.depositAmount||'–'} ₪ עד ${ev.depositDeadline||'–'}\n` +
-    `יתרה ביום האירוע: ${Math.max(0,(ev.performers||[]).reduce((s,p)=>s+Number(p.fee||0)+(p.chuppah?Number(p.chuppahPrice||0):0),0)-Number(ev.depositAmount||0)).toLocaleString('he-IL')} ₪\n\n` +
-    `לשאלות: יוחנן פרידמן | ${d.settings.phone||'052-711-3955'} | ${d.settings.email||'mh4113633@gmail.com'}`
-  );
-  const adminEmail = d.settings.email || '';
-  // to: admin, cc: client, bcc: artists
-  let ml = `mailto:${adminEmail}?subject=${subject}&body=${body}`;
-  if (ev.clientEmail) ml += `&cc=${encodeURIComponent(ev.clientEmail)}`;
-  if (artistEmails.length) ml += `&bcc=${encodeURIComponent(artistEmails.join(','))}`;
-  window.open(ml);
+// ── מודל שליחה ידנית ───────────────────────────────
+function openSendEmailModal(eventId) {
+  const d  = DB.get();
+  const ev = (d.events || []).find(e => e.id === eventId);
+  if (!ev) return;
+
+  const recipients = [];
+  if (ev.clientEmail)
+    recipients.push({ email: ev.clientEmail, name: ev.clientName || 'לקוח', label: `לקוח: ${ev.clientName||''} <${ev.clientEmail}>` });
+  (ev.performers || []).forEach(p => {
+    if (!p.artistId) return;
+    const a = (d.artists || []).find(x => x.id === p.artistId);
+    if (a?.email) recipients.push({ email: a.email, name: a.name, label: `אמן: ${a.name} <${a.email}>` });
+  });
+
+  let modal = document.getElementById('sendEmailModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'sendEmailModal';
+    modal.className = 'modal hidden';
+    modal.innerHTML = `
+      <div class="modal-overlay" onclick="closeSendEmailModal()"></div>
+      <div class="modal-box" style="max-width:480px">
+        <div class="modal-header">
+          <h3><i class="fas fa-paper-plane" style="color:#c9a84c"></i> שלח עדכון מייל</h3>
+          <button class="modal-close" onclick="closeSendEmailModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="sendEmailBody" style="padding:0 24px 20px"></div>
+        <div class="modal-footer">
+          <button type="button" class="a-btn a-btn-outline" onclick="closeSendEmailModal()">ביטול</button>
+          <button type="button" class="a-btn a-btn-primary" id="sendEmailConfirmBtn">
+            <i class="fas fa-paper-plane"></i> שלח
+          </button>
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+  }
+
+  const recipRows = recipients.map((r, i) =>
+    `<label style="display:flex;align-items:center;gap:8px;padding:5px 0;font-size:.87rem;cursor:pointer">
+      <input type="checkbox" class="send-recip" data-idx="${i}" checked style="accent-color:#c9a84c"> ${esc(r.label)}
+    </label>`
+  ).join('');
+
+  document.getElementById('sendEmailBody').innerHTML = `
+    <p style="font-size:.85rem;color:#4a5e80;margin:0 0 14px">
+      ${esc(ev.clientName||'')} · ${esc(ev.eventType||'')} · ${hebrewDate(ev.date)||ev.date||''}
+    </p>
+    <label style="font-weight:600;font-size:.85rem;color:#1a2744;display:block;margin-bottom:4px">נמענים:</label>
+    ${recipRows || '<p style="color:#999;font-size:.82rem">לא נמצאו כתובות מייל באירוע זה</p>'}
+    <div style="margin-top:6px">
+      <input type="email" id="sendEmailOther" placeholder="הוסף כתובת נוספת..." style="width:100%;box-sizing:border-box" />
+    </div>
+    <div style="margin-top:14px">
+      <label style="font-weight:600;font-size:.85rem;color:#1a2744;display:block;margin-bottom:4px">הודעה אישית (אופציונלי):</label>
+      <textarea id="sendEmailCustomMsg" rows="3" placeholder="השאר ריק לטקסט ברירת מחדל..." style="width:100%;box-sizing:border-box;resize:vertical"></textarea>
+    </div>`;
+
+  document.getElementById('sendEmailConfirmBtn').onclick = () => {
+    const checked = [...document.querySelectorAll('.send-recip:checked')].map(c => recipients[+c.dataset.idx]);
+    const other   = (document.getElementById('sendEmailOther').value || '').trim();
+    const msg     = (document.getElementById('sendEmailCustomMsg').value || '').trim();
+    const all     = [...checked];
+    if (other) all.push({ email: other, name: other });
+    if (!all.length) { toast('בחר לפחות נמען אחד', 'error'); return; }
+    all.forEach(r => sendEmail(buildEventEmailParams(ev, r.email, r.name, msg || undefined)));
+    closeSendEmailModal();
+  };
+
+  modal.classList.remove('hidden');
+}
+
+function closeSendEmailModal() {
+  document.getElementById('sendEmailModal')?.classList.add('hidden');
 }
 
 // ── populate time selects with 30-min steps ──────────────────────
@@ -1797,6 +1915,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initAdmin() {
+  initEmailJS();
   // Start 30-min inactivity session timer
   _startSessTimer();
   ['click','keydown','scroll','mousemove'].forEach(ev =>
