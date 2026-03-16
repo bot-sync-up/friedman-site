@@ -866,7 +866,24 @@ function initContactForm() {
   });
 
   if (reset) reset.addEventListener('click', () => {
-    form.reset(); form.classList.remove('hidden'); success.classList.add('hidden');
+    form.reset();
+    form.classList.remove('hidden');
+    success.classList.add('hidden');
+    const hebEl = document.getElementById('cDateHebrew');
+    if (hebEl) hebEl.textContent = '';
+  });
+
+  // Hebrew date display for event date field
+  document.getElementById('cDate')?.addEventListener('change', function() {
+    const hebEl = document.getElementById('cDateHebrew');
+    if (!hebEl) return;
+    if (!this.value) { hebEl.textContent = ''; return; }
+    try {
+      const d = new Date(this.value + 'T12:00:00');
+      hebEl.textContent = d.toLocaleDateString('he-IL-u-ca-hebrew', {
+        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+      });
+    } catch(e) { hebEl.textContent = ''; }
   });
 }
 

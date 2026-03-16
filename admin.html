@@ -211,8 +211,8 @@
                 <input type="date" id="evDate" required />
                 <small id="evDateHebrew" style="color:#c9a84c;font-size:.78rem;display:block;margin-top:2px"></small>
               </div>
-              <div class="field"><label>שעת התחלה</label><input type="time" id="evStartTime" /></div>
-              <div class="field"><label>שעת סיום</label><input type="time" id="evEndTime" /></div>
+              <div class="field"><label>שעת התחלה</label><input type="time" id="evStartTime" step="1800" /></div>
+              <div class="field"><label>שעת סיום</label><input type="time" id="evEndTime" step="1800" /></div>
               <div class="field"><label>שם האולם</label><input type="text" id="evVenue" /></div>
               <div class="field"><label>עיר</label><input type="text" id="evCity" /></div>
               <div class="field"><label>סטטוס</label>
@@ -359,6 +359,16 @@
             <div class="field">
               <label>זמינות</label>
               <input type="text" id="artistAvailability" placeholder="חופשי, עמוס, ..." />
+            </div>
+          </div>
+          <div class="form-2col">
+            <div class="field">
+              <label>טלפון האמן</label>
+              <input type="tel" id="artistPhone" placeholder="05X-XXXXXXX" />
+            </div>
+            <div class="field">
+              <label>אימייל האמן</label>
+              <input type="email" id="artistEmail" placeholder="artist@email.com" />
             </div>
           </div>
           <div class="field">

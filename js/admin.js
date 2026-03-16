@@ -345,6 +345,7 @@ function addPerformer(data = {}) {
     hours:        data.hours        || '',
     chuppah:      data.chuppah      || false,
     chuppahPrice: data.chuppahPrice || '',
+    notes:        data.notes        || '',
   });
   renderPerformerRows();
 }
@@ -417,6 +418,10 @@ function renderPerformerRows() {
           </label>
           ${p.chuppah ? `<input type="number" value="${p.chuppahPrice||''}" min="0" placeholder="תוספת ₪" oninput="tempPerformers[${idx}].chuppahPrice=this.value" style="margin-top:4px" />` : ''}
         </div>` : '<div></div>'}
+      </div>
+      <div class="field" style="margin:8px 0 0">
+        <label style="font-size:.78rem;color:#555">הערות למבצע (יופיעו בחוזה)</label>
+        <input type="text" value="${esc(p.notes||'')}" placeholder="דרישות מיוחדות, ציוד, הגעה מוקדמת..." style="width:100%;font-size:.82rem" oninput="tempPerformers[${idx}].notes=this.value" />
       </div>
     </div>`;
   }).join('');
@@ -550,18 +555,31 @@ function openContract(id) {
 // Email notification when event is confirmed / done
 function notifyEventParties(ev) {
   const d = DB.get();
-  const subject = encodeURIComponent(`אישור אירוע: ${ev.eventType||''} – ${ev.clientName||''} – ${ev.date||''}`);
-  const perfList = (ev.performers||[]).map(p => `• ${p.name||''}${p.type==='keyboardist'&&p.chuppah?' (+ חופה)':''} – ${p.fee?Number(p.fee).toLocaleString('he-IL')+' ₪':''}`).join('\n');
+  // Collect artist emails from performers
+  const artistEmails = (ev.performers||[]).map(p => {
+    if (!p.artistId) return null;
+    const a = (d.artists||[]).find(x => x.id === p.artistId);
+    return a?.email || null;
+  }).filter(Boolean);
+
+  const subject  = encodeURIComponent(`אישור אירוע: ${ev.eventType||''} – ${ev.clientName||''} – ${hebrewDate(ev.date)}`);
+  const perfList = (ev.performers||[]).map(p =>
+    `• ${p.name||''}${p.type==='keyboardist'&&p.chuppah?' (+ חופה)':''} – ${p.fee?Number(p.fee).toLocaleString('he-IL')+' ₪':''}${p.notes?' | '+p.notes:''}`
+  ).join('\n');
   const body = encodeURIComponent(
-    `שלום,\n\nזה לאישור האירוע הבא:\n\n` +
-    `סוג: ${ev.eventType||''}\nתאריך: ${ev.date||''} (${hebrewDate(ev.date)})\n` +
+    `שלום,\n\nלהלן פרטי האירוע המאושר:\n\n` +
+    `סוג: ${ev.eventType||''}\nתאריך: ${hebrewDate(ev.date)} (${ev.date||''})\n` +
     `שעות: ${ev.startTime||''}–${ev.endTime||''}\nאולם: ${ev.venue||''}, ${ev.city||''}\n\n` +
-    `מבצעים:\n${perfList||'–'}\n\nמקדמה: ${ev.depositAmount||'–'} ₪ עד ${ev.depositDeadline||'–'}\n\n` +
-    `לפרטים: יוחנן פרידמן | ${d.settings.phone||''}`
+    `מבצעים:\n${perfList||'–'}\n\n` +
+    `מקדמה: ${ev.depositAmount||'–'} ₪ עד ${ev.depositDeadline||'–'}\n` +
+    `יתרה ביום האירוע: ${Math.max(0,(ev.performers||[]).reduce((s,p)=>s+Number(p.fee||0)+(p.chuppah?Number(p.chuppahPrice||0):0),0)-Number(ev.depositAmount||0)).toLocaleString('he-IL')} ₪\n\n` +
+    `לשאלות: יוחנן פרידמן | ${d.settings.phone||'052-711-3955'} | ${d.settings.email||'mh4113633@gmail.com'}`
   );
-  // Email to client + CC to manager
-  const to = ev.clientEmail ? `${ev.clientEmail},${d.settings.email}` : d.settings.email;
-  const ml = `mailto:${to}?subject=${subject}&body=${body}`;
+  const adminEmail = d.settings.email || '';
+  // to: admin, cc: client, bcc: artists
+  let ml = `mailto:${adminEmail}?subject=${subject}&body=${body}`;
+  if (ev.clientEmail) ml += `&cc=${encodeURIComponent(ev.clientEmail)}`;
+  if (artistEmails.length) ml += `&bcc=${encodeURIComponent(artistEmails.join(','))}`;
   window.open(ml);
 }
 
@@ -637,12 +655,10 @@ function initEventForm() {
     renderEventsList();
     toast('האירוע נשמר בהצלחה');
 
-    // Send email notification if status changed to confirmed or done
+    // Send email notification automatically if status changed to confirmed or done
     if ((newStatus === 'confirmed' || newStatus === 'done') && newStatus !== prevStatus) {
-      if (confirm('האירוע אושר/הושלם. שלח עכשיו אישור לצדדים?')) {
-        const savedEv = (DB.get().events||[]).find(x => x.id === (id ? +id : ev.id));
-        if (savedEv) notifyEventParties(savedEv);
-      }
+      const savedEv = (DB.get().events||[]).find(x => x.id === (id ? +id : ev.id));
+      if (savedEv) notifyEventParties(savedEv);
     }
   });
 }
@@ -690,6 +706,8 @@ function editArtist(id) {
   setVal('artistDesc', a.desc||'');
   setVal('artistFee', a.fee||'');
   setVal('artistAvailability', a.availability||'');
+  setVal('artistPhone', a.phone||'');
+  setVal('artistEmail', a.email||'');
   setVal('artistInternalNotes', a.internalNotes||'');
   document.getElementById('artistActive').checked = a.active;
   document.getElementById('artistPhoto').value = '';
@@ -740,6 +758,8 @@ function initArtistForm() {
       photo:         tempArtistPhoto,
       fee:           getVal('artistFee'),
       availability:  getVal('artistAvailability'),
+      phone:         getVal('artistPhone'),
+      email:         getVal('artistEmail'),
       internalNotes: getVal('artistInternalNotes'),
     };
     if (!artist.name) return;
@@ -1237,8 +1257,11 @@ function renderAdminCalendar() {
   const events = (d.events||[]).filter(e => e.status !== 'cancelled');
   const monthNames = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
 
-  const labelDate = new Date(adminCalYear, adminCalMonth, 1);
-  const hebMonthLabel = labelDate.toLocaleDateString('he-IL-u-ca-hebrew', { month: 'long', year: 'numeric' });
+  const labelDate    = new Date(adminCalYear, adminCalMonth, 1);
+  const lastDayDate  = new Date(adminCalYear, adminCalMonth + 1, 0);
+  const hebStart     = labelDate.toLocaleDateString('he-IL-u-ca-hebrew', { month: 'long', year: 'numeric' });
+  const hebEnd       = lastDayDate.toLocaleDateString('he-IL-u-ca-hebrew', { month: 'long', year: 'numeric' });
+  const hebMonthLabel = hebStart === hebEnd ? hebStart : `${hebStart} / ${hebEnd}`;
   labelEl.innerHTML = `${monthNames[adminCalMonth]} ${adminCalYear} &nbsp;<small style="color:#c9a84c;font-size:.8em">${hebMonthLabel}</small>`;
 
   const evtMap = {};
@@ -1264,9 +1287,15 @@ function renderAdminCalendar() {
     const dateStr = `${adminCalYear}-${String(adminCalMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
     const dayEvts = evtMap[dateStr] || [];
     const isToday = dateStr === today;
-    const hebDay  = new Date(dateStr + 'T12:00:00').toLocaleDateString('he-IL-u-ca-hebrew', { day: 'numeric' });
+    const _d      = new Date(dateStr + 'T12:00:00');
+    const hebDay  = _d.toLocaleDateString('he-IL-u-ca-hebrew', { day: 'numeric' });
+    const hebDayN = parseInt(_d.toLocaleDateString('en-u-ca-hebrew', { day: 'numeric' }), 10);
+    const isRC    = hebDayN === 1;
+    const hebLabel = isRC
+      ? `<span style="color:#c9a84c;font-size:.65rem;font-weight:700">ר"ח ${_d.toLocaleDateString('he-IL-u-ca-hebrew',{month:'short'})}</span>`
+      : hebDay;
 
-    let inner = `<span class="cal-greg">${day}</span><span class="cal-heb">${hebDay}</span>`;
+    let inner = `<span class="cal-greg">${day}</span><span class="cal-heb">${hebLabel}</span>`;
     let cls = 'cal-day';
     if (isToday)        cls += ' today';
     if (dayEvts.length) {
