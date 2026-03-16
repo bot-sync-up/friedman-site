@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <script>if(window!==window.top)window.top.location=window.location.href;</script>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://kit.fontawesome.com https://ka-f.fontawesome.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://ka-f.fontawesome.com; img-src 'self' data: https:; connect-src 'self' https://api.web3forms.com https://ka-f.fontawesome.com;" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="Referrer-Policy" content="no-referrer" />
+  <title>ניהול האתר – יוחנן פרידמן</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <span>יוחנן פרידמן</span>
+      <small>מערכת ניהול האתר</small>
+    </div>
+    <form id="loginForm" novalidate>
+      <div class="field">
+        <label>סיסמה</label>
+        <div class="pw-wrap">
+          <input type="password" id="loginPw" placeholder="הכנס סיסמה..." autocomplete="current-password" />
+          <button type="button" id="togglePw"><i class="fas fa-eye"></i></button>
+        </div>
+      </div>
+      <div id="loginError" class="error-msg hidden">סיסמה שגויה, נסה שנית.</div>
+      <button type="submit" class="a-btn a-btn-primary btn-full">
+        <i class="fas fa-sign-in-alt"></i> כניסה
+      </button>
+    </form>
+    <a href="index.html" class="back-link"><i class="fas fa-arrow-right"></i> חזרה לאתר</a>
+  </div>
+</div>
+
+<!-- ===== ADMIN PANEL ===== -->
+<div id="adminPanel" class="admin-panel hidden">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <span>יוחנן פרידמן</span>
+      <small>לוח ניהול</small>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="sn-item active" data-page="dashboard">
+        <i class="fas fa-tachometer-alt"></i> לוח בקרה
+      </button>
+      <button class="sn-item" data-page="events">
+        <i class="fas fa-calendar-check"></i> אירועים
+      </button>
+      <button class="sn-item" data-page="calendar">
+        <i class="fas fa-calendar-alt"></i> יומן
+      </button>
+      <div class="sn-divider">אמנים</div>
+      <button class="sn-item" data-page="singers">
+        <i class="fas fa-microphone-alt"></i> זמרים
+      </button>
+      <button class="sn-item" data-page="keyboardists">
+        <i class="fas fa-music"></i> קלידנים
+      </button>
+      <button class="sn-item" data-page="musicians">
+        <i class="fas fa-guitar"></i> נגנים
+      </button>
+      <div class="sn-divider">תוכן</div>
+      <button class="sn-item" data-page="videos">
+        <i class="fab fa-youtube"></i> סרטונים
+      </button>
+      <button class="sn-item" data-page="gallery">
+        <i class="fas fa-images"></i> גלריה
+      </button>
+      <button class="sn-item" data-page="recordings">
+        <i class="fas fa-folder-open"></i> הקלטות
+      </button>
+      <button class="sn-item" data-page="news">
+        <i class="fas fa-newspaper"></i> חדשות
+      </button>
+      <button class="sn-item" data-page="submissions">
+        <i class="fas fa-inbox"></i> פניות
+        <span class="badge" id="unreadBadge"></span>
+      </button>
+      <div class="sn-divider">מערכת</div>
+      <button class="sn-item" data-page="content">
+        <i class="fas fa-edit"></i> תוכן האתר
+      </button>
+      <button class="sn-item" data-page="settings">
+        <i class="fas fa-cog"></i> הגדרות
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="index.html" target="_blank" class="sn-link">
+        <i class="fas fa-external-link-alt"></i> צפה באתר
+      </a>
+      <button id="logoutBtn" class="sn-link danger">
+        <i class="fas fa-sign-out-alt"></i> יציאה
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <button class="hamburger-admin" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+      </button>
+      <h1 class="page-title" id="pageTitle">לוח בקרה</h1>
+      <div class="topbar-actions">
+        <a href="index.html" target="_blank" class="a-btn a-btn-outline a-btn-sm">
+          <i class="fas fa-eye"></i> צפה באתר
+        </a>
+      </div>
+    </div>
+
+    <!-- ===== DASHBOARD ===== -->
+    <section id="page-dashboard" class="page-section active">
+      <div class="stats-grid">
+        <div class="stat-card blue">
+          <div class="sc-icon"><i class="fas fa-users"></i></div>
+          <div class="sc-info">
+            <span class="sc-num" id="dashArtists">0</span>
+            <span class="sc-lbl">אמנים פעילים</span>
+          </div>
+        </div>
+        <div class="stat-card gold">
+          <div class="sc-icon"><i class="fas fa-calendar-check"></i></div>
+          <div class="sc-info">
+            <span class="sc-num" id="dashEvents">0</span>
+            <span class="sc-lbl">אירועים מאושרים</span>
+          </div>
+        </div>
+        <div class="stat-card green">
+          <div class="sc-icon"><i class="fas fa-inbox"></i></div>
+          <div class="sc-info">
+            <span class="sc-num" id="dashSubmissions">0</span>
+            <span class="sc-lbl">פניות שהתקבלו</span>
+          </div>
+        </div>
+        <div class="stat-card purple">
+          <div class="sc-icon"><i class="fas fa-newspaper"></i></div>
+          <div class="sc-info">
+            <span class="sc-num" id="dashNews">0</span>
+            <span class="sc-lbl">פריטי חדשות</span>
+          </div>
+        </div>
+      </div>
+      <div class="recent-box" style="margin-bottom:20px">
+        <h3>אירועים קרובים</h3>
+        <div id="upcomingEvents"></div>
+      </div>
+      <div class="recent-box">
+        <h3>פניות אחרונות</h3>
+        <div id="recentSubmissions"></div>
+      </div>
+    </section>
+
+    <!-- ===== EVENTS ===== -->
+    <section id="page-events" class="page-section">
+      <div class="page-actions">
+        <button class="a-btn a-btn-primary" id="addEventBtn">
+          <i class="fas fa-plus"></i> הוסף אירוע
+        </button>
+        <button class="a-btn a-btn-outline" id="exportEventsCsvBtn">
+          <i class="fas fa-download"></i> ייצא CSV
+        </button>
+      </div>
+      <div id="eventsList" class="items-list"></div>
+
+      <!-- Event Modal -->
+      <div id="eventModal" class="modal hidden">
+        <div class="modal-overlay" data-close="eventModal"></div>
+        <div class="modal-box modal-wide">
+          <div class="modal-header">
+            <h3 id="eventModalTitle">הוסף אירוע</h3>
+            <button class="modal-close" data-close="eventModal"><i class="fas fa-times"></i></button>
+          </div>
+          <form id="eventForm" style="padding:20px;max-height:80vh;overflow-y:auto">
+            <input type="hidden" id="eventId" />
+
+            <!-- Client Details -->
+            <h4 class="form-section-title">פרטי הלקוח</h4>
+            <div class="form-2col">
+              <div class="field"><label>שם הלקוח *</label><input type="text" id="evClientName" required /></div>
+              <div class="field"><label>טלפון *</label><input type="tel" id="evClientPhone" required /></div>
+              <div class="field"><label>אימייל</label><input type="email" id="evClientEmail" /></div>
+              <div class="field"><label>כתובת</label><input type="text" id="evClientAddress" /></div>
+            </div>
+
+            <hr class="form-divider" />
+
+            <!-- Event Details -->
+            <h4 class="form-section-title">פרטי האירוע</h4>
+            <div class="form-2col">
+              <div class="field"><label>סוג אירוע *</label>
+                <select id="evEventType">
+                  <option value="חתונה">חתונה</option>
+                  <option value="בר מצוה">בר מצוה</option>
+                  <option value="הילולה">הילולה</option>
+                  <option value="שמחת בית השואבה">שמחת בית השואבה</option>
+                  <option value="שמחה כללית">שמחה כללית</option>
+                  <option value="אחר">אחר</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>תאריך *</label>
+                <input type="date" id="evDate" required />
+                <small id="evDateHebrew" style="color:#c9a84c;font-size:.78rem;display:block;margin-top:2px"></small>
+              </div>
+              <div class="field"><label>שעת התחלה</label><select id="evStartTime"></select></div>
+              <div class="field"><label>שעת סיום</label><select id="evEndTime"></select></div>
+              <div class="field"><label>שם האולם</label><input type="text" id="evVenue" /></div>
+              <div class="field"><label>עיר</label><input type="text" id="evCity" /></div>
+              <div class="field"><label>סטטוס</label>
+                <select id="evStatus">
+                  <option value="pending">ממתין לאישור</option>
+                  <option value="confirmed">מאושר</option>
+                  <option value="done">בוצע</option>
+                  <option value="cancelled">בוטל</option>
+                </select>
+              </div>
+            </div>
+
+            <hr class="form-divider" />
+
+            <!-- Performers Section -->
+            <h4 class="form-section-title">
+              מבצעי האירוע
+              <button type="button" class="a-btn a-btn-outline a-btn-sm" id="addPerformerBtn" style="font-size:.8rem;padding:4px 12px">
+                <i class="fas fa-plus"></i> הוסף מבצע
+              </button>
+            </h4>
+            <div id="performersList">
+              <p style="color:#999;font-size:.82rem;padding:10px 0">לא נוסף מבצע עדיין. לחץ "הוסף מבצע".</p>
+            </div>
+
+            <hr class="form-divider" />
+
+            <!-- Financial -->
+            <h4 class="form-section-title">תנאים כספיים</h4>
+            <div class="form-2col">
+              <div class="field"><label>מקדמה נדרשת (₪)</label><input type="number" id="evDeposit" min="0" /></div>
+              <div class="field"><label>תאריך אחרון למקדמה</label><input type="date" id="evDepositDeadline" /></div>
+            </div>
+            <div class="form-2col">
+              <div class="field">
+                <label class="toggle-label">
+                  <input type="checkbox" id="evDepositReceived" />
+                  <span>מקדמה התקבלה ✓</span>
+                </label>
+              </div>
+              <div class="field" id="evDepositReceivedDateField">
+                <label>תאריך קבלת מקדמה</label>
+                <input type="date" id="evDepositReceivedDate" />
+              </div>
+            </div>
+            <div class="field"><label>הערות</label><textarea id="evNotes" rows="2"></textarea></div>
+
+            <div class="modal-footer">
+              <button type="button" class="a-btn a-btn-outline" data-close="eventModal">ביטול</button>
+              <button type="submit" class="a-btn a-btn-primary">שמור אירוע</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CALENDAR (Admin) ===== -->
+    <section id="page-calendar" class="page-section">
+      <div class="calendar-wrap" style="max-width:720px">
+        <div class="cal-nav">
+          <button class="cal-arrow" id="adminCalPrev"><i class="fas fa-chevron-right"></i></button>
+          <span class="cal-month-label" id="adminCalLabel"></span>
+          <button class="cal-arrow" id="adminCalNext"><i class="fas fa-chevron-left"></i></button>
+        </div>
+        <div class="cal-days" id="adminCalDays"></div>
+        <div class="cal-legend">
+          <span class="cal-leg-item"><span class="leg-dot booked"></span> מאושר</span>
+          <span class="cal-leg-item"><span class="leg-dot pending"></span> ממתין</span>
+          <span class="cal-leg-item"><span class="leg-dot done"></span> בוצע</span>
+        </div>
+      </div>
+      <p style="margin-top:16px;font-size:.82rem;color:#888"><i class="fas fa-info-circle"></i> לניהול אירועים – עבור ל"אירועים" בתפריט</p>
+    </section>
+
+    <!-- ===== SINGERS ===== -->
+    <section id="page-singers" class="page-section">
+      <div class="page-actions">
+        <button class="a-btn a-btn-primary addArtistBtn">
+          <i class="fas fa-plus"></i> הוסף זמר
+        </button>
+      </div>
+      <div id="singersList" class="items-list"></div>
+    </section>
+
+    <!-- ===== KEYBOARDISTS ===== -->
+    <section id="page-keyboardists" class="page-section">
+      <div class="page-actions">
+        <button class="a-btn a-btn-primary addArtistBtn">
+          <i class="fas fa-plus"></i> הוסף קלידן
+        </button>
+      </div>
+      <div id="keyboardistsList" class="items-list"></div>
+    </section>
+
+    <!-- Shared Artist Modal (singers + keyboardists) -->
+    <div id="artistModal" class="modal hidden">
+      <div class="modal-overlay" data-close="artistModal"></div>
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3 id="artistModalTitle">הוסף אמן</h3>
+          <button class="modal-close" data-close="artistModal"><i class="fas fa-times"></i></button>
+        </div>
+        <form id="artistForm">
+          <input type="hidden" id="artistId" />
+          <div class="field">
+            <label>קטגוריה *</label>
+            <select id="artistCategory">
+              <option value="singer">זמר</option>
+              <option value="keyboardist">קלידן</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>שם *</label>
+            <input type="text" id="artistName" placeholder="שם מלא..." required />
+          </div>
+          <div class="field">
+            <label>התמחות *</label>
+            <input type="text" id="artistSpecialty" placeholder="למשל: זמר חסידי" required />
+          </div>
+          <div class="field">
+            <label>תיאור קצר (לאתר)</label>
+            <textarea id="artistDesc" rows="2" placeholder="תיאור לאתר הציבורי..."></textarea>
+          </div>
+          <div class="field">
+            <label>תמונה</label>
+            <input type="file" id="artistPhoto" accept="image/*" />
+            <small>מומלץ: תמונה מרובעת, עד 3MB</small>
+            <div id="artistPhotoPreview" class="img-preview hidden"></div>
+          </div>
+          <div class="field">
+            <label class="toggle-label">
+              <input type="checkbox" id="artistActive" checked />
+              <span>פעיל (מוצג באתר)</span>
+            </label>
+          </div>
+          <!-- Private management fields -->
+          <hr class="form-divider" />
+          <h4 class="form-section-title" style="color:#888;font-size:.82rem"><i class="fas fa-lock" style="margin-left:4px"></i>פרטים פנימיים (לא מוצגים באתר)</h4>
+          <div class="form-2col">
+            <div class="field">
+              <label>שכר (₪)</label>
+              <input type="number" id="artistFee" min="0" placeholder="0" />
+            </div>
+            <div class="field">
+              <label>זמינות</label>
+              <input type="text" id="artistAvailability" placeholder="חופשי, עמוס, ..." />
+            </div>
+          </div>
+          <div class="form-2col">
+            <div class="field">
+              <label>טלפון האמן</label>
+              <input type="tel" id="artistPhone" placeholder="05X-XXXXXXX" />
+            </div>
+            <div class="field">
+              <label>אימייל האמן</label>
+              <input type="email" id="artistEmail" placeholder="artist@email.com" />
+            </div>
+          </div>
+          <div class="field">
+            <label>הערות פנימיות</label>
+            <textarea id="artistInternalNotes" rows="2" placeholder="הערות לשימוש פנימי בלבד..."></textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="a-btn a-btn-outline" data-close="artistModal">ביטול</button>
+            <button type="submit" class="a-btn a-btn-primary">שמור</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ===== MUSICIANS ===== -->
+    <section id="page-musicians" class="page-section">
+      <div class="page-actions">
+        <button class="a-btn a-btn-primary" id="addMusicianBtn"><i class="fas fa-plus"></i> הוסף נגן</button>
+      </div>
+      <div id="musiciansList" class="items-list"></div>
+      <div id="musicianModal" class="modal hidden">
+        <div class="modal-overlay" data-close="musicianModal"></div>
+        <div class="modal-box">
+          <div class="modal-header">
+            <h3 id="musicianModalTitle">הוסף נגן</h3>
+            <button class="modal-close" data-close="musicianModal"><i class="fas fa-times"></i></button>
+          </div>
+          <form id="musicianForm">
+            <input type="hidden" id="musicianId" />
+            <div class="field"><label>שם *</label><input type="text" id="musicianName" required /></div>
+            <div class="field"><label>כלי נגינה *</label><input type="text" id="musicianInstrument" placeholder="קלרינט, כינור, תופים..." required /></div>
+            <div class="field"><label>קטגוריה</label>
+              <select id="musicianCategory">
+                <option value="wind">נשפנים</option>
+                <option value="strings">כלי קשת</option>
+                <option value="keyboard">מקלדות</option>
+                <option value="percussion">כלי הקשה</option>
+                <option value="other">אחר</option>
+              </select>
+            </div>
+            <div class="field"><label>תיאור (לאתר)</label><textarea id="musicianDesc" rows="2"></textarea></div>
+            <div class="field">
+              <label>תמונה</label>
+              <input type="file" id="musicianPhoto" accept="image/*" />
+              <small>מומלץ: תמונה מרובעת, עד 3MB</small>
+              <div id="musicianPhotoPreview" class="img-preview hidden"></div>
+            </div>
+            <div class="field">
+              <label class="toggle-label"><input type="checkbox" id="musicianActive" checked /><span>פעיל</span></label>
+            </div>
+            <hr class="form-divider" />
+            <h4 class="form-section-title" style="color:#888;font-size:.82rem"><i class="fas fa-lock" style="margin-left:4px"></i>פרטים פנימיים</h4>
+            <div class="field"><label>שכר (₪)</label><input type="number" id="musicianFee" min="0" placeholder="0" /></div>
+            <div class="field"><label>הערות פנימיות</label><textarea id="musicianInternalNotes" rows="2"></textarea></div>
+            <div class="modal-footer">
+              <button type="button" class="a-btn a-btn-outline" data-close="musicianModal">ביטול</button>
+              <button type="submit" class="a-btn a-btn-primary">שמור</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== VIDEOS ===== -->
+    <section id="page-videos" class="page-section">
+      <div class="page-actions">
+        <button class="a-btn a-btn-primary" id="addVideoBtn"><i class="fas fa-plus"></i> הוסף סרטון</button>
+      </div>
+      <div id="videosList" class="items-list"></div>
+      <div id="videoModal" class="modal hidden">
+        <div class="modal-overlay" data-close="videoModal"></div>
+        <div class="modal-box">
+          <div class="modal-header">
+            <h3 id="videoModalTitle">הוסף סרטון</h3>
+            <button class="modal-close" data-close="videoModal"><i class="fas fa-times"></i></button>
+          </div>
+          <form id="videoForm">
+            <input type="hidden" id="videoItemId" />
+            <div class="field">
+              <label>מזהה YouTube *</label>
+              <input type="text" id="videoYtId" placeholder="dQw4w9WgXcQ או קישור מלא" />
+              <small>הכנס מזהה (ID) או קישור מלא – המערכת תחלץ את ה-ID</small>
+            </div>
+            <div class="field"><label>כותרת *</label><input type="text" id="videoTitle" required /></div>
+            <div class="field">
+              <label>שם האמן (לתצוגה)</label>
+              <input type="text" id="videoArtistLabel" placeholder="שם להצגה בכרטיס..." />
+            </div>
+            <div class="field">
+              <label>תיוג אמנים (לפרופיל אמן)</label>
+              <select id="videoArtistTags" multiple size="5" style="width:100%">
+                <!-- populated by JS -->
+              </select>
+              <small>סמן כמה אמנים בו-זמנית עם Ctrl+לחיצה</small>
+            </div>
+            <div class="field"><label class="toggle-label"><input type="checkbox" id="videoActive" checked /><span>פעיל</span></label></div>
+            <div class="modal-footer">
+              <button type="button" class="a-btn a-btn-outline" data-close="videoModal">ביטול</button>
+              <button type="submit" class="a-btn a-btn-primary">שמור</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== RECORDINGS ===== -->
+    <section id="page-recordings" class="page-section">
+      <div class="page-actions">
+        <button class="a-btn a-btn-primary" id="addRecordingBtn"><i class="fas fa-plus"></i> הוסף הקלטה</button>
+      </div>
+      <div id="recordingsList" class="items-list"></div>
+      <div id="recordingModal" class="modal hidden">
+        <div class="modal-overlay" data-close="recordingModal"></div>
+        <div class="modal-box">
+          <div class="modal-header">
+            <h3 id="recordingModalTitle">הוסף הקלטה</h3>
+            <button class="modal-close" data-close="recordingModal"><i class="fas fa-times"></i></button>
+          </div>
+          <form id="recordingForm">
+            <input type="hidden" id="recordingId" />
+            <div class="field"><label>כותרת *</label><input type="text" id="recTitle" required /></div>
+            <div class="field"><label>תאריך האירוע</label><input type="date" id="recDate" /></div>
+            <div class="field"><label>גודל תיקייה</label><input type="text" id="recSize" placeholder="1.5 GB" /></div>
+            <div class="field">
+              <label>קישור גוגל דרייב</label>
+              <input type="url" id="recDriveUrl" placeholder="https://drive.google.com/..." />
+              <small>ודא שהקישור מוגדר כ"כל מי שיש לו קישור יכול לצפות"</small>
+            </div>
+            <div class="field">
+              <label>קישור אודיו (MP3 / נגן מובנה)</label>
+              <input type="url" id="recAudioUrl" placeholder="https://...mp3 או קישור ישיר לקובץ אודיו" />
+              <small>אם קיים – יוצג נגן אודיו מובנה באתר</small>
+            </div>
+            <div class="field"><label>תיאור</label><textarea id="recDesc" rows="2"></textarea></div>
+            <div class="field">
+              <label>תיוג אמנים (לפרופיל אמן)</label>
+              <select id="recArtistTags" multiple size="5" style="width:100%">
+                <!-- populated by JS -->
+              </select>
+              <small>סמן כמה אמנים בו-זמנית עם Ctrl+לחיצה</small>
+            </div>
+            <div class="field"><label class="toggle-label"><input type="checkbox" id="recActive" checked /><span>פעיל</span></label></div>
+            <div class="modal-footer">
+              <button type="button" class="a-btn a-btn-outline" data-close="recordingModal">ביטול</button>
+              <button type="submit" class="a-btn a-btn-primary">שמור</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== GALLERY ===== -->
+    <section id="page-gallery" class="page-section">
+      <div class="page-actions">
+        <button class="a-btn a-btn-primary" id="addGalleryBtn">
+          <i class="fas fa-plus"></i> אלבום חדש
+        </button>
+      </div>
+      <div id="galleryList" class="gallery-admin-grid"></div>
+      <div id="galleryModal" class="modal hidden">
+        <div class="modal-overlay" data-close="galleryModal"></div>
+        <div class="modal-box">
+          <div class="modal-header">
+            <h3 id="galleryModalTitle">הוסף לגלריה</h3>
+            <button class="modal-close" data-close="galleryModal"><i class="fas fa-times"></i></button>
+          </div>
+          <form id="galleryForm">
+            <input type="hidden" id="galleryItemId" />
+            <div class="field"><label>שם האלבום *</label><input type="text" id="galleryCaption" placeholder="שם האירוע / תיאור..." required /></div>
+            <div class="field"><label>קטגוריה</label>
+              <select id="galleryCategory">
+                <option value="events">אירועים</option>
+                <option value="studio">סטודיו</option>
+              </select>
+            </div>
+            <hr style="margin:12px 0;border:none;border-top:1px solid #e8edf5" />
+            <div style="font-weight:600;color:#1a2744;font-size:.88rem;margin-bottom:8px">פריטי האלבום</div>
+            <div id="albumItemsList" style="margin-bottom:10px;max-height:220px;overflow-y:auto"></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+              <button type="button" id="albumAddImageBtn" class="a-btn a-btn-outline" style="font-size:.8rem;padding:6px 13px"><i class="fas fa-image"></i> תמונה</button>
+              <button type="button" id="albumAddVideoBtn" class="a-btn a-btn-outline" style="font-size:.8rem;padding:6px 13px"><i class="fas fa-video"></i> סרטון</button>
+              <button type="button" id="albumAddYoutubeBtn" class="a-btn a-btn-outline" style="font-size:.8rem;padding:6px 13px"><i class="fab fa-youtube" style="color:#c00"></i> YouTube</button>
+            </div>
+            <input type="file" id="albumImageFile" accept="image/*" multiple style="display:none" />
+            <input type="file" id="albumVideoFile" accept="video/mp4,video/webm,video/ogg" style="display:none" />
+            <div id="albumYoutubeRow" style="display:none;margin-top:10px">
+              <div style="display:flex;gap:8px">
+                <input type="text" id="albumYoutubeIdInput" placeholder="YouTube Video ID" style="flex:1" />
+                <button type="button" id="albumYoutubeAddBtn" class="a-btn a-btn-primary" style="padding:8px 14px">הוסף</button>
+              </div>
+              <small style="margin-top:4px;display:block">ה-ID מופיע בכתובת: youtube.com/watch?v=<strong>ID</strong></small>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="a-btn a-btn-outline" data-close="galleryModal">ביטול</button>
+              <button type="submit" class="a-btn a-btn-primary">שמור</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== NEWS ===== -->
+    <section id="page-news" class="page-section">
+      <div class="page-actions">
+        <button class="a-btn a-btn-primary" id="addNewsBtn"><i class="fas fa-plus"></i> הוסף חדשה</button>
+      </div>
+      <div id="newsList" class="items-list"></div>
+      <div id="newsModal" class="modal hidden">
+        <div class="modal-overlay" data-close="newsModal"></div>
+        <div class="modal-box modal-wide">
+          <div class="modal-header">
+            <h3 id="newsModalTitle">הוסף חדשה</h3>
+            <button class="modal-close" data-close="newsModal"><i class="fas fa-times"></i></button>
+          </div>
+          <form id="newsForm">
+            <input type="hidden" id="newsItemId" />
+            <div class="field"><label>כותרת *</label><input type="text" id="newsTitle" placeholder="כותרת החדשה..." required /></div>
+            <div class="field"><label>תאריך</label><input type="date" id="newsDate" /></div>
+            <div class="field"><label>תקציר *</label><textarea id="newsExcerpt" rows="3" placeholder="תיאור קצר..."></textarea></div>
+            <div class="field"><label class="toggle-label"><input type="checkbox" id="newsActive" checked /><span>פעיל (מוצג באתר)</span></label></div>
+            <div class="modal-footer">
+              <button type="button" class="a-btn a-btn-outline" data-close="newsModal">ביטול</button>
+              <button type="submit" class="a-btn a-btn-primary">שמור</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SUBMISSIONS ===== -->
+    <section id="page-submissions" class="page-section">
+      <div class="page-actions">
+        <button class="a-btn a-btn-outline" id="exportCsvBtn"><i class="fas fa-download"></i> ייצא CSV</button>
+        <button class="a-btn a-btn-danger" id="clearSubmissionsBtn"><i class="fas fa-trash"></i> נקה הכל</button>
+      </div>
+      <div class="sub-filter-tabs">
+        <button class="sub-filter active" data-filter="all">הכל <span class="filter-count" id="fcAll"></span></button>
+        <button class="sub-filter" data-filter="new">חדשות <span class="filter-count" id="fcNew"></span></button>
+        <button class="sub-filter" data-filter="in_progress">בטיפול <span class="filter-count" id="fcInProgress"></span></button>
+        <button class="sub-filter" data-filter="done">טופל <span class="filter-count" id="fcDone"></span></button>
+      </div>
+      <div id="submissionsTable" class="table-wrap"></div>
+    </section>
+
+    <!-- ===== CONTENT ===== -->
+    <section id="page-content" class="page-section">
+      <div class="content-form">
+        <h3>טקסטים ראשיים</h3>
+        <div class="field"><label>שם (כותרת ראשית)</label><input type="text" id="ctHeroTitle" /></div>
+        <div class="field"><label>כותרת משנה</label><input type="text" id="ctHeroSubtitle" /></div>
+        <div class="field"><label>סלוגן</label><input type="text" id="ctTagline" /></div>
+        <div class="field"><label>כותרת אודות</label><input type="text" id="ctAboutTitle" /></div>
+        <div class="field"><label>טקסט אודות (HTML מותר)</label><textarea id="ctAboutContent" rows="6"></textarea></div>
+        <div class="field"><label>טלפון</label><input type="text" id="ctPhone" /></div>
+        <div class="field"><label>אימייל</label><input type="email" id="ctEmail" /></div>
+
+        <hr class="divider" />
+        <h3>תנאי החוזה</h3>
+        <p class="help-text">ערוך כל סעיף, מחק או הוסף סעיפים חדשים. אלה יופיעו בחוזה המודפס.</p>
+        <div id="contractTermsContainer"></div>
+        <button type="button" class="a-btn a-btn-outline" id="addTermBtn" style="margin-top:8px">
+          <i class="fas fa-plus"></i> הוסף סעיף
+        </button>
+
+        <hr class="divider" />
+        <h3>עדויות ומכתבי המלצה</h3>
+        <p class="help-text">ניהול העדויות שיוצגו באתר. ניתן להוסיף, לערוך ולהסתיר.</p>
+        <div id="testimonialsAdminList"></div>
+        <button type="button" class="a-btn a-btn-outline" id="addTestimonialBtn" style="margin-top:8px">
+          <i class="fas fa-plus"></i> הוסף עדות
+        </button>
+
+        <hr class="divider" />
+        <button class="a-btn a-btn-primary" id="saveContentBtn">
+          <i class="fas fa-save"></i> שמור הכל
+        </button>
+        <div id="contentSaved" class="save-msg hidden">✓ נשמר בהצלחה!</div>
+      </div>
+    </section>
+
+    <!-- ===== SETTINGS ===== -->
+    <section id="page-settings" class="page-section">
+      <div class="content-form">
+        <h3>שינוי סיסמה</h3>
+        <div class="field"><label>סיסמה נוכחית</label><input type="password" id="currPw" /></div>
+        <div class="field"><label>סיסמה חדשה</label><input type="password" id="newPw" /></div>
+        <div class="field"><label>אישור סיסמה חדשה</label><input type="password" id="confirmPw" /></div>
+        <button class="a-btn a-btn-primary" id="changePwBtn"><i class="fas fa-key"></i> שנה סיסמה</button>
+        <div id="pwMsg" class="save-msg hidden"></div>
+        <hr class="divider" />
+        <h3>איפוס נתונים</h3>
+        <p class="help-text">זהירות! פעולה זו תמחק את כל השינויים ותחזיר את האתר לנתוני ברירת המחדל.</p>
+        <button class="a-btn a-btn-danger" id="resetDataBtn"><i class="fas fa-redo"></i> איפוס לברירת מחדל</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Confirm Dialog -->
+<div id="confirmDialog" class="modal hidden">
+  <div class="modal-overlay"></div>
+  <div class="modal-box modal-sm">
+    <div class="modal-header"><h3>אישור פעולה</h3></div>
+    <p id="confirmMsg" style="padding:16px 24px;color:#4a5e80"></p>
+    <div class="modal-footer">
+      <button class="a-btn a-btn-outline" id="confirmCancel">ביטול</button>
+      <button class="a-btn a-btn-danger" id="confirmOk">אישור</button>
+    </div>
+  </div>
+</div>
+
+<div id="toastContainer"></div>
+<script src="js/admin.js"></script>
+</body>
+</html>
