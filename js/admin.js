@@ -127,15 +127,77 @@ function dualDate(dateStr) {
 }
 
 // ============ Auth ============
-function isLoggedIn() { return sessionStorage.getItem('yf_admin') === 'yes'; }
-function login(pw) {
-  const data = DB.get();
-  if (pw === (data.settings.adminPassword || 'friedman2025')) {
-    sessionStorage.setItem('yf_admin', 'yes'); return true;
-  }
-  return false;
+// SHA-256 via Web Crypto API
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
-function logout() { sessionStorage.removeItem('yf_admin'); location.reload(); }
+function genToken() {
+  const a = new Uint8Array(32); crypto.getRandomValues(a);
+  return Array.from(a).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+function isLoggedIn() {
+  const t = sessionStorage.getItem('yf_tok');
+  return typeof t === 'string' && t.length === 64;
+}
+
+// Brute-force lockout (max 5 attempts → 15-min lockout)
+const _LS_KEY = 'yf_ls';
+function _getLS()  { try { return JSON.parse(localStorage.getItem(_LS_KEY)||'{}'); } catch(e){return{};} }
+function _saveLS(s){ localStorage.setItem(_LS_KEY, JSON.stringify(s)); }
+function _lockInfo() {
+  const s = _getLS();
+  if (s.lockUntil && Date.now() < s.lockUntil) return { locked:true, secs: Math.ceil((s.lockUntil-Date.now())/1000) };
+  if (s.lockUntil) localStorage.removeItem(_LS_KEY);
+  return { locked:false, attempts: s.attempts||0 };
+}
+function _recordFail() {
+  const s = _getLS(); s.attempts = (s.attempts||0)+1;
+  if (s.attempts >= 5) { s.lockUntil = Date.now()+15*60*1000; s.attempts=0; }
+  _saveLS(s); return s;
+}
+function _clearLS() { localStorage.removeItem(_LS_KEY); }
+
+// Session auto-logout after 30 minutes of inactivity
+let _sessTimer = null;
+const SESS_MS = 30*60*1000;
+function _startSessTimer() {
+  clearTimeout(_sessTimer);
+  _sessTimer = setTimeout(() => {
+    sessionStorage.removeItem('yf_tok');
+    const err = document.getElementById('loginError');
+    if (err) { err.textContent = 'הסשן פג תוקף – נא להתחבר מחדש'; err.classList.remove('hidden'); }
+    document.getElementById('loginScreen')?.classList.remove('hidden');
+    document.getElementById('adminPanel')?.classList.add('hidden');
+  }, SESS_MS);
+}
+function _resetSessTimer() { if (isLoggedIn()) _startSessTimer(); }
+
+async function login(pw) {
+  const info = _lockInfo();
+  if (info.locked) return { ok:false, locked:true, secs:info.secs };
+  const d = DB.get();
+  const pwHash = await sha256(pw);
+  // First run: migrate plaintext password to hash
+  if (!d.settings.adminPasswordHash) {
+    const legacyHash = await sha256(d.settings.adminPassword||'friedman2025');
+    if (pwHash === legacyHash) {
+      d.settings.adminPasswordHash = legacyHash;
+      delete d.settings.adminPassword;
+      DB.save(d); _clearLS();
+      sessionStorage.setItem('yf_tok', genToken());
+      return { ok:true };
+    }
+  } else if (pwHash === d.settings.adminPasswordHash) {
+    _clearLS();
+    sessionStorage.setItem('yf_tok', genToken());
+    return { ok:true };
+  }
+  const s = _recordFail();
+  if (s.lockUntil) return { ok:false, locked:true, secs:900 };
+  return { ok:false, locked:false, remaining: 5-(s.attempts||0) };
+}
+function logout() { clearTimeout(_sessTimer); sessionStorage.removeItem('yf_tok'); location.reload(); }
 
 // ============ Nav ============
 let currentPage = 'dashboard';
@@ -1528,15 +1590,19 @@ function initContentForm() {
 
 // ============ SETTINGS ============
 function initSettings() {
-  document.getElementById('changePwBtn')?.addEventListener('click', () => {
+  document.getElementById('changePwBtn')?.addEventListener('click', async () => {
     const msg = document.getElementById('pwMsg');
-    const d = DB.get();
+    const d   = DB.get();
     const curr = getVal('currPw'), nw = getVal('newPw'), conf = getVal('confirmPw');
-    if (curr !== (d.settings.adminPassword||'friedman2025')) { showMsg(msg,'סיסמה נוכחית שגויה',true); return; }
-    if (nw.length < 6) { showMsg(msg,'מינימום 6 תווים',true); return; }
-    if (nw !== conf)    { showMsg(msg,'הסיסמאות אינן תואמות',true); return; }
-    d.settings.adminPassword = nw; DB.save(d);
-    showMsg(msg,'הסיסמה שונתה!',false);
+    const currHash   = await sha256(curr);
+    const storedHash = d.settings.adminPasswordHash || await sha256(d.settings.adminPassword||'friedman2025');
+    if (currHash !== storedHash) { showMsg(msg,'סיסמה נוכחית שגויה',true); return; }
+    if (nw.length < 8) { showMsg(msg,'מינימום 8 תווים',true); return; }
+    if (nw !== conf)   { showMsg(msg,'הסיסמאות אינן תואמות',true); return; }
+    d.settings.adminPasswordHash = await sha256(nw);
+    delete d.settings.adminPassword;
+    DB.save(d);
+    showMsg(msg,'הסיסמה שונתה! (מוצפנת)',false);
     ['currPw','newPw','confirmPw'].forEach(id => setVal(id,''));
   });
   document.getElementById('resetDataBtn')?.addEventListener('click', () => {
@@ -1625,15 +1691,39 @@ function showMsg(el, m, isErr) {
 document.addEventListener('DOMContentLoaded', () => {
   initPwToggle(); initModals(); initConfirmDialog();
 
-  document.getElementById('loginForm')?.addEventListener('submit', e => {
+  document.getElementById('loginForm')?.addEventListener('submit', async e => {
     e.preventDefault();
-    const pw = document.getElementById('loginPw').value;
-    if (login(pw)) {
+    const pw  = document.getElementById('loginPw').value;
+    const err = document.getElementById('loginError');
+    const btn = e.target.querySelector('[type=submit]');
+
+    // Check lockout before even trying
+    const pre = _lockInfo();
+    if (pre.locked) {
+      const m = Math.ceil(pre.secs/60);
+      err.textContent = `חשבון חסום עקב נסיונות כניסה חוזרים. נסה שוב בעוד ${m} דקות.`;
+      err.classList.remove('hidden'); return;
+    }
+
+    if (btn) { btn.disabled = true; btn.textContent = '...'; }
+    const res = await login(pw);
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> כניסה'; }
+
+    if (res.ok) {
+      err.classList.add('hidden');
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('adminPanel').classList.remove('hidden');
       initAdmin();
+    } else if (res.locked) {
+      const m = Math.ceil(res.secs/60);
+      err.textContent = `יותר מדי נסיונות כושלים. חשבון חסום ל-${m} דקות.`;
+      err.classList.remove('hidden');
     } else {
-      document.getElementById('loginError').classList.remove('hidden');
+      const rem = res.remaining ?? '';
+      err.textContent = rem > 0
+        ? `סיסמה שגויה – נותרו ${rem} נסיונות לפני חסימה`
+        : 'סיסמה שגויה';
+      err.classList.remove('hidden');
     }
   });
 
@@ -1645,6 +1735,11 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initAdmin() {
+  // Start 30-min inactivity session timer
+  _startSessTimer();
+  ['click','keydown','scroll','mousemove'].forEach(ev =>
+    document.addEventListener(ev, _resetSessTimer, { passive:true })
+  );
   document.querySelectorAll('.sn-item[data-page]').forEach(btn => btn.addEventListener('click', () => showPage(btn.dataset.page)));
   document.getElementById('logoutBtn')?.addEventListener('click', logout);
   document.getElementById('exportEventsCsvBtn')?.addEventListener('click', exportEventsCsv);

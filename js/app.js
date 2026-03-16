@@ -821,7 +821,8 @@ function initContactForm() {
     e.preventDefault();
     const d   = DB.get();
     const sub = {
-      id: Date.now(),
+      id:        Date.now(),
+      status:    'new',
       name:      document.getElementById('cName').value.trim(),
       phone:     document.getElementById('cPhone').value.trim(),
       email:     document.getElementById('cEmail').value.trim(),
