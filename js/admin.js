@@ -583,7 +583,25 @@ function notifyEventParties(ev) {
   window.open(ml);
 }
 
+// ── populate time selects with 30-min steps ──────────────────────
+function buildTimeSelects() {
+  ['evStartTime','evEndTime'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel || sel.tagName !== 'SELECT' || sel.options.length > 1) return;
+    sel.innerHTML = '<option value="">-- שעה --</option>';
+    for (let h = 0; h < 24; h++) {
+      for (let m = 0; m < 60; m += 30) {
+        const v = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+        const o = document.createElement('option');
+        o.value = v; o.textContent = v;
+        sel.appendChild(o);
+      }
+    }
+  });
+}
+
 function initEventForm() {
+  buildTimeSelects();
   // Add event button
   document.getElementById('addEventBtn')?.addEventListener('click', () => {
     document.getElementById('eventForm').reset();
