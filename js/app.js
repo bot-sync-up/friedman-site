@@ -879,10 +879,15 @@ function initContactForm() {
     if (!hebEl) return;
     if (!this.value) { hebEl.textContent = ''; return; }
     try {
-      const d = new Date(this.value + 'T12:00:00');
-      hebEl.textContent = d.toLocaleDateString('he-IL-u-ca-hebrew', {
-        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-      });
+      const d      = new Date(this.value + 'T12:00:00');
+      const dayN   = parseInt(new Intl.DateTimeFormat('en-u-ca-hebrew', { day: 'numeric' }).format(d), 10);
+      const tbl    = ['','א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ז׳','ח׳','ט׳','י׳','י"א','י"ב','י"ג','י"ד','ט"ו','ט"ז','י"ז','י"ח','י"ט','כ׳','כ"א','כ"ב','כ"ג','כ"ד','כ"ה','כ"ו','כ"ז','כ"ח','כ"ט','ל׳'];
+      const dayHeb = (dayN >= 1 && dayN <= 30) ? tbl[dayN] : String(dayN);
+      const wd     = d.toLocaleDateString('he-IL', { weekday: 'long' });
+      const parts  = new Intl.DateTimeFormat('he-IL-u-ca-hebrew', { month: 'long', year: 'numeric' }).formatToParts(d);
+      const month  = parts.find(p => p.type === 'month')?.value || '';
+      const year   = parts.find(p => p.type === 'year')?.value  || '';
+      hebEl.textContent = `${wd}, ${dayHeb} ב${month} ${year}`;
     } catch(e) { hebEl.textContent = ''; }
   });
 }

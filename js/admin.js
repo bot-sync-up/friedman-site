@@ -109,20 +109,31 @@ const DB = {
 };
 
 // ============ Hebrew Date Helper ============
+// Convert day number (1-30) to Hebrew letter notation
+function toHebLetters(n) {
+  const tbl = ['','א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ז׳','ח׳','ט׳',
+    'י׳','י"א','י"ב','י"ג','י"ד','ט"ו','ט"ז','י"ז','י"ח','י"ט',
+    'כ׳','כ"א','כ"ב','כ"ג','כ"ד','כ"ה','כ"ו','כ"ז','כ"ח','כ"ט','ל׳'];
+  return (n >= 1 && n <= 30) ? tbl[n] : String(n);
+}
+// Returns e.g. "כ"ו באדר תשפ"ו" — robust across all browsers/OS
 function hebrewDate(dateStr) {
   if (!dateStr) return '';
   try {
     const d = new Date(dateStr + 'T12:00:00');
-    return d.toLocaleDateString('he-IL-u-ca-hebrew', { year: 'numeric', month: 'long', day: 'numeric' });
+    const dayN  = parseInt(new Intl.DateTimeFormat('en-u-ca-hebrew', { day: 'numeric' }).format(d), 10);
+    const parts = new Intl.DateTimeFormat('he-IL-u-ca-hebrew', { month: 'long', year: 'numeric' }).formatToParts(d);
+    const month = parts.find(p => p.type === 'month')?.value || '';
+    const year  = parts.find(p => p.type === 'year')?.value  || '';
+    return `${toHebLetters(dayN)} ב${month} ${year}`.trim();
   } catch(e) { return ''; }
 }
 function dualDate(dateStr) {
   if (!dateStr) return '–';
   try {
-    const d = new Date(dateStr + 'T12:00:00');
-    const heb  = d.toLocaleDateString('he-IL-u-ca-hebrew', { year: 'numeric', month: 'long', day: 'numeric' });
+    const d    = new Date(dateStr + 'T12:00:00');
     const greg = d.toLocaleDateString('he-IL', { day: 'numeric', month: 'long', year: 'numeric' });
-    return `${heb} — ${greg}`;
+    return `${hebrewDate(dateStr)} — ${greg}`;
   } catch(e) { return dateStr; }
 }
 
@@ -153,14 +164,14 @@ function _lockInfo() {
 }
 function _recordFail() {
   const s = _getLS(); s.attempts = (s.attempts||0)+1;
-  if (s.attempts >= 5) { s.lockUntil = Date.now()+15*60*1000; s.attempts=0; }
+  if (s.attempts >= 3) { s.lockUntil = Date.now()+60*60*1000; s.attempts=0; } // 3 attempts → 1h lockout
   _saveLS(s); return s;
 }
 function _clearLS() { localStorage.removeItem(_LS_KEY); }
 
 // Session auto-logout after 30 minutes of inactivity
 let _sessTimer = null;
-const SESS_MS = 30*60*1000;
+const SESS_MS = 2*60*60*1000; // 2 hours
 function _startSessTimer() {
   clearTimeout(_sessTimer);
   _sessTimer = setTimeout(() => {
@@ -195,7 +206,7 @@ async function login(pw) {
   }
   const s = _recordFail();
   if (s.lockUntil) return { ok:false, locked:true, secs:900 };
-  return { ok:false, locked:false, remaining: 5-(s.attempts||0) };
+  return { ok:false, locked:false, remaining: 3-(s.attempts||0) };
 }
 function logout() { clearTimeout(_sessTimer); sessionStorage.removeItem('yf_tok'); location.reload(); }
 
@@ -1277,8 +1288,11 @@ function renderAdminCalendar() {
 
   const labelDate    = new Date(adminCalYear, adminCalMonth, 1);
   const lastDayDate  = new Date(adminCalYear, adminCalMonth + 1, 0);
-  const hebStart     = labelDate.toLocaleDateString('he-IL-u-ca-hebrew', { month: 'long', year: 'numeric' });
-  const hebEnd       = lastDayDate.toLocaleDateString('he-IL-u-ca-hebrew', { month: 'long', year: 'numeric' });
+  const _fmtMY = new Intl.DateTimeFormat('he-IL-u-ca-hebrew', { month: 'long', year: 'numeric' });
+  const _sp    = _fmtMY.formatToParts(labelDate);
+  const _ep    = _fmtMY.formatToParts(lastDayDate);
+  const hebStart = `${_sp.find(p=>p.type==='month')?.value||''} ${_sp.find(p=>p.type==='year')?.value||''}`.trim();
+  const hebEnd   = `${_ep.find(p=>p.type==='month')?.value||''} ${_ep.find(p=>p.type==='year')?.value||''}`.trim();
   const hebMonthLabel = hebStart === hebEnd ? hebStart : `${hebStart} / ${hebEnd}`;
   labelEl.innerHTML = `${monthNames[adminCalMonth]} ${adminCalYear} &nbsp;<small style="color:#c9a84c;font-size:.8em">${hebMonthLabel}</small>`;
 
@@ -1306,12 +1320,13 @@ function renderAdminCalendar() {
     const dayEvts = evtMap[dateStr] || [];
     const isToday = dateStr === today;
     const _d      = new Date(dateStr + 'T12:00:00');
-    const hebDay  = _d.toLocaleDateString('he-IL-u-ca-hebrew', { day: 'numeric' });
-    const hebDayN = parseInt(_d.toLocaleDateString('en-u-ca-hebrew', { day: 'numeric' }), 10);
+    const hebDayN = parseInt(new Intl.DateTimeFormat('en-u-ca-hebrew', { day: 'numeric' }).format(_d), 10);
     const isRC    = hebDayN === 1;
+    const _mParts = new Intl.DateTimeFormat('he-IL-u-ca-hebrew', { month: 'short' }).formatToParts(_d);
+    const _mName  = _mParts.find(p => p.type === 'month')?.value || '';
     const hebLabel = isRC
-      ? `<span style="color:#c9a84c;font-size:.65rem;font-weight:700">ר"ח ${_d.toLocaleDateString('he-IL-u-ca-hebrew',{month:'short'})}</span>`
-      : hebDay;
+      ? `<span style="color:#c9a84c;font-size:.65rem;font-weight:700">ר"ח ${_mName}</span>`
+      : toHebLetters(hebDayN);
 
     let inner = `<span class="cal-greg">${day}</span><span class="cal-heb">${hebLabel}</span>`;
     let cls = 'cal-day';
