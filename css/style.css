@@ -5,9 +5,10 @@
 
 /* ===== Construction Banner ===== */
 #constructionBanner {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 9999;
+  left: 0; right: 0;
+  z-index: 1001;
   background: repeating-linear-gradient(
     -45deg,
     #c9a84c,
@@ -36,6 +37,7 @@
   letter-spacing: 1px;
 }
 .cb-icon { font-size: 1rem; }
+body.has-banner .navbar { top: 38px; }
 
 /* ---------- Variables ---------- */
 :root {
@@ -184,6 +186,7 @@ input, select, textarea { font-family: inherit; }
   position: fixed;
   top: 0; right: 0; left: 0;
   z-index: 1000;
+  transition: top .2s ease, background .4s, box-shadow .4s, padding .4s;
   padding: 18px 0;
   transition: background .4s, box-shadow .4s, padding .4s;
 }
