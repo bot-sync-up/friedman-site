@@ -1788,6 +1788,16 @@ function initSettings() {
   document.getElementById('resetDataBtn')?.addEventListener('click', () => {
     confirm2('איפוס מלא – כל הנתונים יאבדו!', () => { DB.reset(); alert('הנתונים אופסו. הדף יטען מחדש.'); location.reload(); });
   });
+  // Load saved GitHub token
+  const ghInp = document.getElementById('ghTokenInput');
+  if (ghInp && ghToken()) ghInp.value = ghToken();
+  document.getElementById('saveGhTokenBtn')?.addEventListener('click', () => {
+    const val = document.getElementById('ghTokenInput')?.value.trim();
+    if (!val) { toast('הכנס token', 'error'); return; }
+    localStorage.setItem('gh_token', val);
+    toast('Token נשמר ✓', 'success');
+    initUnderConstructionToggle();
+  });
 }
 
 // ============ BADGE ============
@@ -1936,6 +1946,58 @@ function initAdmin() {
   initContentForm();
   initSettings();
   initAdminCalendar();
+  initUnderConstructionToggle();
   showPage('dashboard');
   refreshBadge();
+}
+
+// ============ UNDER CONSTRUCTION TOGGLE ============
+const GH_REPO  = 'bot-sync-up/friedman-site';
+const GH_FILE  = 'config.js';
+function ghToken() { return localStorage.getItem('gh_token') || ''; }
+
+function initUnderConstructionToggle() {
+  const toggle = document.getElementById('ucToggle');
+  const label  = document.getElementById('ucStatusLabel');
+  if (!toggle || !ghToken()) return;
+  fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`, {
+    headers: { Authorization: `Bearer ${ghToken()}` }
+  })
+  .then(r => r.json())
+  .then(data => {
+    const content = atob(data.content.replace(/\n/g,''));
+    const isOn = /underConstruction:\s*true/.test(content);
+    toggle.checked = isOn;
+    if (label) { label.textContent = isOn ? 'פעיל' : 'כבוי'; label.style.color = isOn ? '#e74c3c' : '#888'; }
+  })
+  .catch(() => {});
+}
+
+function toggleUnderConstruction(enable) {
+  if (!ghToken()) { toast('הכנס GitHub Token בהגדרות תחילה', 'error'); return; }
+  const label = document.getElementById('ucStatusLabel');
+  const newContent = `// Site configuration – managed via admin panel\nwindow.SITE_CONFIG = {\n  underConstruction: ${enable}\n};\n`;
+  const encoded = btoa(unescape(encodeURIComponent(newContent)));
+
+  fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`, {
+    headers: { Authorization: `Bearer ${ghToken()}` }
+  })
+  .then(r => r.json())
+  .then(data => {
+    return fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${ghToken()}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: enable ? 'הפעלת מצב בנייה' : 'כיבוי מצב בנייה',
+        content: encoded,
+        sha: data.sha
+      })
+    });
+  })
+  .then(r => r.json())
+  .then(() => {
+    toast(enable ? '🔧 מצב בנייה הופעל – האתר יתעדכן תוך כדקה' : '✅ האתר חזר לאוויר', enable ? 'info' : 'success');
+    if (label) { label.textContent = enable ? 'פעיל' : 'כבוי'; label.style.color = enable ? '#e74c3c' : '#888'; }
+  })
+  .catch(() => toast('שגיאה בעדכון GitHub', 'error'));
 }

@@ -150,6 +150,20 @@
           </div>
         </div>
       </div>
+      <!-- Under Construction toggle -->
+      <div class="recent-box" style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 22px">
+        <div>
+          <div style="font-weight:700;color:#1a2744;font-size:.95rem"><i class="fas fa-tools" style="color:#c9a84c;margin-left:8px"></i>מצב בנייה באתר</div>
+          <div style="font-size:.8rem;color:#888;margin-top:3px">הפעל כדי להציג "האתר בשדרוג" לכל הגולשים</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <span id="ucStatusLabel" style="font-size:.82rem;color:#888">כבוי</span>
+          <label class="uc-toggle-wrap">
+            <input type="checkbox" id="ucToggle" onchange="toggleUnderConstruction(this.checked)" />
+            <span class="uc-toggle-slider"></span>
+          </label>
+        </div>
+      </div>
       <div class="recent-box" style="margin-bottom:20px">
         <h3>אירועים קרובים</h3>
         <div id="upcomingEvents"></div>
@@ -659,6 +673,11 @@
         <div class="field"><label>אישור סיסמה חדשה</label><input type="password" id="confirmPw" /></div>
         <button class="a-btn a-btn-primary" id="changePwBtn"><i class="fas fa-key"></i> שנה סיסמה</button>
         <div id="pwMsg" class="save-msg hidden"></div>
+        <hr class="divider" />
+        <h3><i class="fab fa-github" style="color:#c9a84c;margin-left:6px"></i>GitHub Token</h3>
+        <p style="font-size:.82rem;color:#888;margin-bottom:12px">נדרש לטוגל מצב בנייה. נשמר מקומית בלבד.</p>
+        <div class="field"><label>Personal Access Token</label><input type="password" id="ghTokenInput" placeholder="github_pat_..." /></div>
+        <button class="a-btn a-btn-primary" id="saveGhTokenBtn"><i class="fas fa-save"></i> שמור Token</button>
         <hr class="divider" />
         <h3>איפוס נתונים</h3>
         <p class="help-text">זהירות! פעולה זו תמחק את כל השינויים ותחזיר את האתר לנתוני ברירת המחדל.</p>

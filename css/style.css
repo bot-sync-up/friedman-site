@@ -1453,3 +1453,75 @@ textarea { resize: vertical; }
    ============================================= */
 @media (max-width: 900px) { .gallery-grid { column-count: 2; } }
 @media (max-width: 480px) { .gallery-grid { column-count: 1; } }
+
+/* =============================================
+   UNDER CONSTRUCTION PAGE
+   ============================================= */
+#constructionPage {
+  position: fixed; inset: 0; z-index: 99999;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.uc-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(145deg, #060d1e 0%, #0f2040 45%, #1a1a2e 100%);
+}
+.uc-bg::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(201,168,76,.08) 0%, transparent 70%);
+}
+.uc-content {
+  position: relative; z-index: 1;
+  text-align: center; padding: 40px 24px;
+  max-width: 560px; width: 100%;
+  animation: ucFadeIn .9s ease both;
+}
+@keyframes ucFadeIn { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:none; } }
+
+.uc-logo {
+  display: flex; align-items: center; justify-content: center; gap: 16px;
+  margin-bottom: 36px;
+}
+.uc-logo-line { flex: 1; height: 1px; background: linear-gradient(to left, transparent, #c9a84c); max-width: 80px; }
+.uc-logo-line:first-child { background: linear-gradient(to right, transparent, #c9a84c); }
+.uc-logo-heb {
+  font-family: 'Frank Ruhl Libre', serif;
+  font-size: 1.05rem; font-weight: 700;
+  color: #c9a84c; letter-spacing: 2px;
+}
+.uc-icon {
+  font-size: 2.8rem; color: #c9a84c;
+  margin-bottom: 20px; opacity: .9;
+  animation: ucPulse 2.5s ease-in-out infinite;
+}
+@keyframes ucPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+
+.uc-title {
+  font-family: 'Frank Ruhl Libre', serif;
+  font-size: 2.6rem; font-weight: 900;
+  color: #fff; margin: 0 0 8px;
+  text-shadow: 0 2px 20px rgba(0,0,0,.4);
+}
+.uc-sub {
+  font-size: .95rem; letter-spacing: 4px; text-transform: uppercase;
+  color: #c9a84c; margin: 0 0 24px; font-weight: 500;
+}
+.uc-msg {
+  font-size: 1rem; color: rgba(255,255,255,.65);
+  line-height: 1.8; margin: 0 0 32px;
+}
+.uc-divider {
+  width: 48px; height: 2px;
+  background: linear-gradient(to left, transparent, #c9a84c, transparent);
+  margin: 0 auto 28px;
+}
+.uc-contact { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+.uc-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: rgba(255,255,255,.7); font-size: .88rem;
+  text-decoration: none; transition: color .25s;
+  padding: 8px 16px; border: 1px solid rgba(201,168,76,.3); border-radius: 30px;
+}
+.uc-link:hover { color: #c9a84c; border-color: #c9a84c; }
+.uc-link i { color: #c9a84c; font-size: .82rem; }
