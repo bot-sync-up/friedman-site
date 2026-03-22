@@ -3,6 +3,40 @@
    Main Stylesheet
    ============================================= */
 
+/* ===== Construction Banner ===== */
+#constructionBanner {
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    -45deg,
+    #c9a84c,
+    #c9a84c 10px,
+    #0a1628 10px,
+    #0a1628 20px
+  );
+  color: #fff;
+  text-align: center;
+  padding: 8px 16px;
+  font-size: .85rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.cb-text {
+  background: #0a1628;
+  color: #c9a84c;
+  padding: 4px 18px;
+  border-radius: 20px;
+  font-family: 'Frank Ruhl Libre', serif;
+  font-size: .9rem;
+  letter-spacing: 1px;
+}
+.cb-icon { font-size: 1rem; }
+
 /* ---------- Variables ---------- */
 :root {
   --navy:         #08122a;
