@@ -363,39 +363,7 @@
   </div>
 </div>
 
-<!-- ===== UNDER CONSTRUCTION ===== -->
-<div id="constructionPage" style="display:none">
-  <div class="uc-bg"></div>
-  <div class="uc-content">
-    <div class="uc-logo">
-      <div class="uc-logo-line"></div>
-      <span class="uc-logo-heb">יוחנן פרידמן</span>
-      <div class="uc-logo-line"></div>
-    </div>
-    <div class="uc-icon"><i class="fas fa-tools"></i></div>
-    <h1 class="uc-title">האתר בשדרוג</h1>
-    <p class="uc-sub">We'll Be Back Soon</p>
-    <p class="uc-msg">אנחנו עובדים על שיפורים עבורכם.<br>נחזור בקרוב עם חוויה חדשה ומשופרת.</p>
-    <div class="uc-divider"></div>
-    <div class="uc-contact">
-      <a href="tel:+972500000000" class="uc-link"><i class="fas fa-phone-alt"></i> צור קשר</a>
-      <a href="mailto:info@friedman.syncup.co.il" class="uc-link"><i class="fas fa-envelope"></i> info@friedman.syncup.co.il</a>
-    </div>
-  </div>
-</div>
-
-<script>
-  (function(){
-    var cfg = window.SITE_CONFIG;
-    if(cfg && cfg.underConstruction){
-      document.getElementById('constructionPage').style.display='flex';
-      document.body.style.overflow='hidden';
-      var s=document.createElement('style');
-      s.textContent='body>*:not(#constructionPage){visibility:hidden!important}#constructionPage{visibility:visible!important}';
-      document.head.appendChild(s);
-    }
-  })();
-</script>
+<!-- construction page removed – banner only -->
 
 <script src="js/app.js"></script>
 <script>
