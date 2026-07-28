@@ -1,0 +1,2 @@
+# Uploaded media (images/videos/audio) are committed here by /api/upload.
+# Cloudflare Pages serves them as static assets under /uploads/... after redeploy.

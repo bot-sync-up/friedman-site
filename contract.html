@@ -257,10 +257,8 @@
 <script>
 (function() {
   const params      = new URLSearchParams(window.location.search);
-  const eventId     = params.get('id');
   const dataParam   = params.get('data');
-  const STORAGE_KEY = 'yf_site_data';
-  const SITE_URL    = 'https://bot-sync-up.github.io/friedman-site';
+  const SITE_URL    = 'https://friedman.syncup.co.il';
 
   // ── helpers to encode/decode Hebrew text safely in base64 ──
   function encodeB64(obj) {
@@ -294,27 +292,22 @@
   setText('contractDate', todayHeb + ' ' + todayGreg);
   setText('contractMadeDate', todayHeb);
 
-  // ── load event from ?data= (client shareable link) or ?id= (admin localStorage) ──
+  // Load event data — passed in via base64 ?data= param (from admin's "print contract" button
+  // or from a shareable link).
   let event, settings = {};
 
-  if (dataParam) {
-    try { event = decodeB64(dataParam); }
-    catch(e) {
-      document.querySelector('.contract-page').innerHTML += '<p style="color:red;text-align:center;padding:20px">קישור לא תקין</p>';
-      return;
-    }
-  } else if (eventId) {
-    try {
-      const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-      event      = (data.events || []).find(e => String(e.id) === String(eventId));
-      settings   = data.settings || {};
-    } catch(e) {}
-    if (!event) {
-      document.querySelector('.contract-page').innerHTML += '<p style="color:red;text-align:center;padding:20px">שגיאה: אירוע לא נמצא</p>';
-      return;
-    }
-  } else {
+  if (!dataParam) {
     document.querySelector('.contract-page').innerHTML += '<p style="color:red;text-align:center;padding:20px">שגיאה: לא נמצאו נתוני אירוע</p>';
+    return;
+  }
+  try {
+    event = decodeB64(dataParam);
+    if (event && event._settings) {
+      settings = event._settings;
+      delete event._settings;
+    }
+  } catch(e) {
+    document.querySelector('.contract-page').innerHTML += '<p style="color:red;text-align:center;padding:20px">קישור לא תקין</p>';
     return;
   }
 
@@ -470,7 +463,7 @@
         return;
       }
       // Build shareable link (all data encoded in URL – works on any device)
-      const shareLink = `${SITE_URL}/contract.html?data=${encodeB64(event)}`;
+      const shareLink = `${SITE_URL}/contract.html?data=${encodeB64({ ...event, _settings: settings })}`;
       const perfNames = (event.performers || []).map(p => p.name).filter(Boolean).join(', ') || event.artistName || '';
       const subject   = encodeURIComponent(`חוזה הופעה – ${event.eventType || 'אירוע'} | ${event.date || ''}`);
       const body      = encodeURIComponent(

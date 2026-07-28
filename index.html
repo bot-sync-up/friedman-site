@@ -10,7 +10,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Frank+Ruhl+Libre:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="css/style.css" />
-  <script src="config.js"></script>
 </head>
 <body>
 
@@ -366,13 +365,5 @@
 <!-- construction page removed – banner only -->
 
 <script src="js/app.js"></script>
-<script>
-  // הצג באנר בנייה אם הדגל פעיל
-  if (window.SITE_CONFIG && window.SITE_CONFIG.underConstruction) {
-    var b = document.getElementById('constructionBanner');
-    if (b) b.style.display = 'flex';
-    document.body.classList.add('has-banner');
-  }
-</script>
 </body>
 </html>

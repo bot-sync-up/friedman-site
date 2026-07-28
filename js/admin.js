@@ -5,11 +5,8 @@
 
 'use strict';
 
-const STORAGE_KEY = 'yf_site_data';
-
 const DEFAULT_DATA = {
   settings: {
-    adminPassword: 'friedman2025',
     heroTitle: 'יוחנן פרידמן', heroSubtitle: 'ניהול אמנים',
     heroTagline: 'הפנים של המוזיקה החסידית',
     aboutTitle: 'יוחנן פרידמן –\nמאחורי המוזיקה',
@@ -26,87 +23,117 @@ const DEFAULT_DATA = {
       'תשלום מלא ביום האירוע לפני תחילת ההופעה.',
     ],
   },
-  artists: [
-    { id:1, name:'יצחק אייזיק לנדא', category:'singer', specialty:'זמר חסידי', desc:'קולו החם ורב-הגוונים.', photo:'', active:true, fee:'', internalNotes:'', availability:'' },
-    { id:2, name:'יחיאל שטיין',       category:'singer', specialty:'זמר ומנגן',  desc:'ניגונים עמוקים.', photo:'', active:true, fee:'', internalNotes:'', availability:'' },
-    { id:3, name:'איציק אייזנשטט',    category:'singer', specialty:'זמר חסידי', desc:'גשר בין מסורת למודרנה.', photo:'', active:true, fee:'', internalNotes:'', availability:'' },
-    { id:4, name:'עקיבא רוטמן',       category:'singer', specialty:'זמר ופייטן',desc:'פיוטים מרגשים.', photo:'', active:true, fee:'', internalNotes:'', availability:'' },
-    { id:5, name:'מיילך בראונשטיין',  category:'singer', specialty:'זמר חסידי', desc:'כישרון נדיר.', photo:'', active:true, fee:'', internalNotes:'', availability:'' },
-  ],
-  musicians: [
-    { id:1, name:'ישראל ברגר',  instrument:'קלרינט',   category:'wind',      desc:'נשפן מוביל.', photo:'', active:true, fee:'', internalNotes:'' },
-    { id:2, name:'אלתר פיינברג', instrument:'כינור',    category:'strings',   desc:'כנר קלאסי.', photo:'', active:true, fee:'', internalNotes:'' },
-    { id:3, name:'מנחם הנגל',   instrument:'אקורדיון', category:'keyboard',  desc:'אקורדיוניסט.', photo:'', active:true, fee:'', internalNotes:'' },
-    { id:4, name:'שמעון דייטש', instrument:'תופים',    category:'percussion',desc:'מתופף מקצועי.', photo:'', active:true, fee:'', internalNotes:'' },
-  ],
-  videos: [
-    { id:1, youtubeId:'', title:'הופעה בחתונה גדולה', artist:'יצחק אייזיק לנדא', artistIds:[], active:true },
-    { id:2, youtubeId:'', title:'ניגון בית השואבה', artist:'יחיאל שטיין', artistIds:[], active:true },
-  ],
-  recordings: [
-    { id:1, title:'חתונה – משפחת כהן', date:'2025-03-15', size:'2.3 GB', driveUrl:'', desc:'הקלטה מלאה', artistIds:[], active:true },
-  ],
-  events: [],
-  gallery: [
-    { id:1, url:'', caption:'שמחת חתונה - ירושלים', category:'events', color:'linear-gradient(135deg,#1a3060,#0f2040)' },
-    { id:2, url:'', caption:'הופעה - בני ברק',       category:'events', color:'linear-gradient(135deg,#0f2040,#1e3060)' },
-    { id:3, url:'', caption:'הקלטה בסטודיו',           category:'studio', color:'linear-gradient(135deg,#1e4060,#0a1628)' },
-    { id:4, url:'', caption:'ערב שיעור גדול',          category:'events', color:'linear-gradient(135deg,#163048,#1a3060)' },
-    { id:5, url:'', caption:'רגעי הכנה',               category:'studio', color:'linear-gradient(135deg,#182040,#1a2f50)' },
-    { id:6, url:'', caption:'שמחת בר מצוה',            category:'events', color:'linear-gradient(135deg,#0d1b3e,#163060)' },
-  ],
-  news: [
-    { id:1, title:'הופעה מרהיבה בשמחת בית השואבה', date:'2025-10-18', excerpt:'אלפי מתפללים נהנו.', active:true },
-    { id:2, title:'אלבום חדש – "נשמה שרה"',        date:'2025-09-05', excerpt:'אלבום מרגש חדש.', active:true },
-    { id:3, title:'הזמנות לאירועי חנוכה',           date:'2025-08-20', excerpt:'צרו קשר עכשיו.', active:true },
-  ],
-  submissions: [],
-  testimonials: [
-    { id:1, name:'ר\' אברהם שטרן', role:'חתן שמח', text:'יוחנן פרידמן עשה את שמחת בננו לחוויה בלתי נשכחת.', active:true },
-    { id:2, name:'משה כהן', role:'בעל שמחה', text:'מרוצה ביותר. האמן הגיע בזמן, ויוחנן טיפל בכל הפרטים.', active:true },
-    { id:3, name:'יעקב לוי', role:'מארגן אירועים', text:'עובד עם יוחנן שנים רבות. מנהל מצוין ואמין.', active:true },
-  ],
+  artists: [], musicians: [], videos: [], recordings: [], events: [],
+  gallery: [], news: [], submissions: [], testimonials: [],
 };
 
-// ============ DB ============
+// ============ DB — synchronous accessors backed by an in-memory cache. ============
+// Boot flow: DB.init() fetches /api/data?all=1 once (called from initAdmin after login),
+// then DB.get() returns the cached object synchronously (unchanged for all existing callers).
+// DB.save(d) updates the cache and schedules a debounced POST /api/data.
 const DB = {
-  get() {
-    try {
-      const d = localStorage.getItem(STORAGE_KEY);
-      if (!d) return this.reset();
-      const data = JSON.parse(d);
-      if (!data.artists || !data.artists.length) data.artists = DEFAULT_DATA.artists;
-      if (!data.musicians) data.musicians = DEFAULT_DATA.musicians;
-      if (!data.gallery || !data.gallery.length) data.gallery = DEFAULT_DATA.gallery;
-      if (!data.news || !data.news.length) data.news = DEFAULT_DATA.news;
-      if (!data.videos)     data.videos = DEFAULT_DATA.videos;
-      if (!data.recordings) data.recordings = DEFAULT_DATA.recordings;
-      if (!data.events)     data.events = [];
-      if (!data.settings)   data.settings = DEFAULT_DATA.settings;
-      if (!data.submissions) data.submissions = [];
-      // Migration: category on artists
-      data.artists.forEach(a => { if (!a.category) a.category = 'singer'; });
-      // Migration: artistIds on videos/recordings
-      data.videos.forEach(v => { if (!v.artistIds) v.artistIds = []; });
-      data.recordings.forEach(r => { if (!r.artistIds) r.artistIds = []; });
-      // Migration: contractTerms in settings
-      if (!data.settings.contractTerms) data.settings.contractTerms = DEFAULT_DATA.settings.contractTerms;
-      // Migration: id and status on submissions
-      (data.submissions||[]).forEach(s => {
-        if (!s.id)     s.id     = new Date(s.date).getTime() || Date.now();
-        if (!s.status) s.status = 'new';
-      });
-      // Migration: testimonials + audioUrl on recordings
-      if (!data.testimonials) data.testimonials = DEFAULT_DATA.testimonials || [];
-      data.recordings.forEach(r => { if (!r.audioUrl) r.audioUrl = ''; });
-      // Migration: type on gallery items
-      data.gallery.forEach(g => { if (!g.type) g.type = 'image'; if (!g.youtubeId) g.youtubeId = ''; });
-      return data;
-    } catch(e) { return this.reset(); }
+  _cache: null,
+  _saveTimer: null,
+  _flushing: false,
+  _pending: false,
+
+  _migrate(data) {
+    if (!data || typeof data !== 'object') data = {};
+    if (!data.artists)     data.artists     = [];
+    if (!data.musicians)   data.musicians   = [];
+    if (!data.gallery)     data.gallery     = [];
+    if (!data.news)        data.news        = [];
+    if (!data.videos)      data.videos      = [];
+    if (!data.recordings)  data.recordings  = [];
+    if (!data.events)      data.events      = [];
+    if (!data.settings)    data.settings    = {};
+    if (!data.submissions) data.submissions = [];
+    if (!data.testimonials) data.testimonials = [];
+    data.artists.forEach(a => { if (!a.category) a.category = 'singer'; });
+    data.videos.forEach(v => { if (!v.artistIds) v.artistIds = []; });
+    data.recordings.forEach(r => { if (!r.artistIds) r.artistIds = []; if (!r.audioUrl) r.audioUrl = ''; });
+    if (!data.settings.contractTerms) data.settings.contractTerms = DEFAULT_DATA.settings.contractTerms;
+    (data.submissions||[]).forEach(s => {
+      if (!s.id)     s.id     = new Date(s.date).getTime() || Date.now();
+      if (!s.status) s.status = 'new';
+    });
+    data.gallery.forEach(g => {
+      if (!g.items) {
+        const it = {};
+        if ((g.type === 'video' || g.type === 'youtube') && g.youtubeId) { it.type = 'youtube'; it.youtubeId = g.youtubeId; it.id = 1; }
+        else if (g.url) { it.type = 'image'; it.url = g.url; it.id = 1; }
+        g.items = it.type ? [it] : [];
+      }
+    });
+    return data;
   },
-  save(d) { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); },
-  reset() { localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_DATA)); return DEFAULT_DATA; }
+
+  async init() {
+    const tok = sessionStorage.getItem('yf_tok') || '';
+    const r = await fetch('/api/data?all=1', { headers: tok ? { Authorization: 'Bearer ' + tok } : {} });
+    if (r.status === 401) {
+      // Token expired or invalid — kick back to login
+      sessionStorage.removeItem('yf_tok');
+      throw new Error('הסשן פג — נדרשת התחברות מחדש');
+    }
+    if (r.ok) {
+      const j = await r.json();
+      this._cache = this._migrate(j);
+    } else {
+      throw new Error('שגיאה בטעינת נתונים (' + r.status + ')');
+    }
+    return this._cache;
+  },
+
+  get() {
+    if (!this._cache) throw new Error('DB not initialized — call DB.init() first');
+    return this._cache;
+  },
+
+  save(d) {
+    this._cache = d;
+    clearTimeout(this._saveTimer);
+    this._saveTimer = setTimeout(() => this._flush(), 700);
+  },
+
+  async saveNow() { clearTimeout(this._saveTimer); return this._flush(); },
+
+  async _flush() {
+    if (this._flushing) { this._pending = true; return; }
+    this._flushing = true;
+    try {
+      const tok = sessionStorage.getItem('yf_tok') || '';
+      const r = await fetch('/api/data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok },
+        body: JSON.stringify(this._cache),
+      });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      if (typeof _setSaveIndicator === 'function') _setSaveIndicator('saved');
+    } catch (e) {
+      console.error('data save failed:', e);
+      if (typeof _setSaveIndicator === 'function') _setSaveIndicator('error');
+      // retry in 5s
+      setTimeout(() => this._flush(), 5000);
+    } finally {
+      this._flushing = false;
+      if (this._pending) { this._pending = false; this._flush(); }
+    }
+  },
 };
+
+// Small UI cue for save state — element is optional, added by admin HTML if present.
+function _setSaveIndicator(state) {
+  const el = document.getElementById('saveIndicator');
+  if (!el) return;
+  const map = {
+    saving: { txt: 'שומר…', color: '#c9a84c' },
+    saved:  { txt: '✓ נשמר בענן', color: '#27ae60' },
+    error:  { txt: '⚠ שגיאה בשמירה — יינתן ניסיון נוסף', color: '#e74c3c' },
+  };
+  const m = map[state] || map.saved;
+  el.textContent = m.txt; el.style.color = m.color;
+}
 
 // ============ Hebrew Date Helper ============
 // Convert day number (1-30) to Hebrew letter notation
@@ -187,22 +214,24 @@ function _resetSessTimer() { if (isLoggedIn()) _startSessTimer(); }
 async function login(pw) {
   const info = _lockInfo();
   if (info.locked) return { ok:false, locked:true, secs:info.secs };
-  const d = DB.get();
-  const pwHash = await sha256(pw);
-  // First run: migrate plaintext password to hash
-  if (!d.settings.adminPasswordHash) {
-    const legacyHash = await sha256(d.settings.adminPassword||'friedman2025');
-    if (pwHash === legacyHash) {
-      d.settings.adminPasswordHash = legacyHash;
-      delete d.settings.adminPassword;
-      DB.save(d); _clearLS();
-      sessionStorage.setItem('yf_tok', genToken());
-      return { ok:true };
+  try {
+    const r = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw }),
+    });
+    if (r.ok) {
+      const j = await r.json();
+      if (j.token) {
+        _clearLS();
+        sessionStorage.setItem('yf_tok', j.token);
+        return { ok:true };
+      }
     }
-  } else if (pwHash === d.settings.adminPasswordHash) {
-    _clearLS();
-    sessionStorage.setItem('yf_tok', genToken());
-    return { ok:true };
+    // Fall through to failure
+  } catch (e) {
+    console.error('login network error', e);
+    return { ok:false, locked:false, remaining: null, network:true };
   }
   const s = _recordFail();
   if (s.lockUntil) return { ok:false, locked:true, secs:900 };
@@ -245,40 +274,76 @@ function renderPage(p) {
   }
 }
 
-// ============ Image Upload Helper ============
-function resizeAndRead(file, maxW, maxH, quality, callback) {
-  const reader = new FileReader();
-  reader.onload = e => {
-    const img = new Image();
-    img.onload = () => {
-      let w = img.width, h = img.height;
-      if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
-      if (h > maxH) { w = Math.round(w * maxH / h); h = maxH; }
-      const canvas = document.createElement('canvas');
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      callback(canvas.toDataURL('image/jpeg', quality || 0.82));
+// ============ Upload Helpers ============
+// Uploads to /api/upload (Cloudflare Pages Function → commits to GitHub repo → served via CDN).
+// Returns { url } where url is like "/uploads/YYYYMM/timestamp-name.ext".
+
+// Resize an image in-browser to a max box, JPEG-compress, and hand back a File ready to upload.
+function resizeImageFile(file, maxW, maxH, quality) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = e => {
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+        if (h > maxH) { w = Math.round(w * maxH / h); h = maxH; }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        canvas.toBlob(blob => {
+          if (!blob) return reject(new Error('canvas toBlob failed'));
+          const name = (file.name || 'photo').replace(/\.[^.]+$/, '') + '.jpg';
+          resolve(new File([blob], name, { type: 'image/jpeg' }));
+        }, 'image/jpeg', quality || 0.85);
+      };
+      img.src = e.target.result;
     };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
+    reader.readAsDataURL(file);
+  });
+}
+
+async function uploadToServer(fileOrBlob, providedName) {
+  const tok = sessionStorage.getItem('yf_tok') || '';
+  const fd = new FormData();
+  fd.append('file', fileOrBlob, providedName || fileOrBlob.name || 'upload');
+  if (providedName) fd.append('name', providedName);
+  const r = await fetch('/api/upload', {
+    method: 'POST',
+    headers: { Authorization: 'Bearer ' + tok },
+    body: fd,
+  });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || ('העלאה נכשלה (' + r.status + ')'));
+  return j.url;
 }
 
 function bindPhotoInput(inputId, previewId, onLoad) {
   const inp  = document.getElementById(inputId);
   const prev = document.getElementById(previewId);
   if (!inp) return;
-  inp.addEventListener('change', () => {
+  inp.addEventListener('change', async () => {
     const file = inp.files[0];
     if (!file) return;
-    if (file.size > 3 * 1024 * 1024) { alert('התמונה גדולה מדי – מקסימום 3MB'); inp.value = ''; return; }
-    resizeAndRead(file, 600, 600, 0.82, dataUrl => {
+    if (file.size > 8 * 1024 * 1024) { alert('התמונה גדולה מדי – מקסימום 8MB'); inp.value = ''; return; }
+    try {
+      toast('מעלה תמונה…', 'info');
+      const resized = await resizeImageFile(file, 800, 800, 0.85);
+      const url = await uploadToServer(resized);
       if (prev) {
-        prev.innerHTML = `<img src="${dataUrl}" alt="תצוגה מקדימה">`;
+        prev.innerHTML = `<img src="${url}" alt="תצוגה מקדימה">`;
         prev.classList.remove('hidden');
       }
-      if (onLoad) onLoad(dataUrl);
-    });
+      if (onLoad) onLoad(url);
+      toast('✓ תמונה הועלתה', 'success');
+    } catch (e) {
+      console.error(e);
+      toast('שגיאה: ' + e.message, 'error');
+    } finally {
+      inp.value = '';
+    }
   });
 }
 
@@ -561,7 +626,21 @@ function deleteEvent(id) {
 }
 
 function openContract(id) {
-  window.open(`contract.html?id=${id}`, '_blank', 'width=900,height=700,scrollbars=yes');
+  const d  = DB.get();
+  const ev = (d.events || []).find(e => e.id === id);
+  if (!ev) { toast('אירוע לא נמצא', 'error'); return; }
+  // Bundle event + relevant settings into a shareable base64 param so contract.html
+  // doesn't need to authenticate.
+  const payload = {
+    ...ev,
+    _settings: {
+      phone: d.settings.phone || '',
+      email: d.settings.email || '',
+      contractTerms: d.settings.contractTerms || [],
+    },
+  };
+  const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+  window.open(`contract.html?data=${b64}`, '_blank', 'width=900,height=700,scrollbars=yes');
 }
 
 // ══════════════════════════════════════════════════
@@ -1212,26 +1291,38 @@ function initGalleryForm() {
   document.getElementById('albumAddImageBtn')?.addEventListener('click', () => {
     document.getElementById('albumImageFile').click();
   });
-  document.getElementById('albumImageFile')?.addEventListener('change', function() {
-    Array.from(this.files).forEach(file => {
-      if (file.size > 3 * 1024 * 1024) { toast(`${file.name} – גודל מקסימלי 3MB`, 'error'); return; }
-      const r = new FileReader();
-      r.onload = ev => { tempAlbumItems.push({ id: Date.now() + Math.random(), type: 'image', url: ev.target.result }); renderAlbumItems(); };
-      r.readAsDataURL(file);
-    });
+  document.getElementById('albumImageFile')?.addEventListener('change', async function() {
+    const files = Array.from(this.files);
     this.value = '';
+    for (const file of files) {
+      if (file.size > 8 * 1024 * 1024) { toast(`${file.name} – גודל מקסימלי 8MB`, 'error'); continue; }
+      try {
+        toast(`מעלה ${file.name}…`, 'info');
+        const resized = await resizeImageFile(file, 1600, 1600, 0.86);
+        const url = await uploadToServer(resized);
+        tempAlbumItems.push({ id: Date.now() + Math.random(), type: 'image', url });
+        renderAlbumItems();
+      } catch (e) { toast(`שגיאה: ${e.message}`, 'error'); }
+    }
+    toast('✓ תמונות נוספו לאלבום', 'success');
   });
 
   document.getElementById('albumAddVideoBtn')?.addEventListener('click', () => {
     document.getElementById('albumVideoFile').click();
   });
-  document.getElementById('albumVideoFile')?.addEventListener('change', function() {
-    const file = this.files[0]; if (!file) return;
-    if (file.size > 15 * 1024 * 1024) { toast('גודל מקסימלי לסרטון: 15MB', 'error'); this.value = ''; return; }
-    const r = new FileReader();
-    r.onload = ev => { tempAlbumItems.push({ id: Date.now() + Math.random(), type: 'video', url: ev.target.result }); renderAlbumItems(); };
-    r.readAsDataURL(file);
-    this.value = '';
+  document.getElementById('albumVideoFile')?.addEventListener('change', async function() {
+    const file = this.files[0]; this.value = ''; if (!file) return;
+    if (file.size > 20 * 1024 * 1024) {
+      toast('סרטון גדול מ־20MB — מומלץ להעלות ל־YouTube ולצרף את ה־ID', 'error');
+      return;
+    }
+    try {
+      toast('מעלה סרטון…', 'info');
+      const url = await uploadToServer(file);
+      tempAlbumItems.push({ id: Date.now() + Math.random(), type: 'video', url });
+      renderAlbumItems();
+      toast('✓ סרטון הועלה', 'success');
+    } catch (e) { toast(`שגיאה: ${e.message}`, 'error'); }
   });
 
   document.getElementById('albumAddYoutubeBtn')?.addEventListener('click', () => {
@@ -1772,32 +1863,35 @@ function initContentForm() {
 function initSettings() {
   document.getElementById('changePwBtn')?.addEventListener('click', async () => {
     const msg = document.getElementById('pwMsg');
-    const d   = DB.get();
     const curr = getVal('currPw'), nw = getVal('newPw'), conf = getVal('confirmPw');
-    const currHash   = await sha256(curr);
-    const storedHash = d.settings.adminPasswordHash || await sha256(d.settings.adminPassword||'friedman2025');
-    if (currHash !== storedHash) { showMsg(msg,'סיסמה נוכחית שגויה',true); return; }
     if (nw.length < 8) { showMsg(msg,'מינימום 8 תווים',true); return; }
     if (nw !== conf)   { showMsg(msg,'הסיסמאות אינן תואמות',true); return; }
-    d.settings.adminPasswordHash = await sha256(nw);
-    delete d.settings.adminPassword;
-    DB.save(d);
-    showMsg(msg,'הסיסמה שונתה! (מוצפנת)',false);
-    ['currPw','newPw','confirmPw'].forEach(id => setVal(id,''));
+    try {
+      const tok = sessionStorage.getItem('yf_tok') || '';
+      const r = await fetch('/api/auth', {
+        method: 'PUT',
+        headers: { 'Content-Type':'application/json', Authorization: 'Bearer ' + tok },
+        body: JSON.stringify({ current: curr, next: nw }),
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) { showMsg(msg, j.error || 'שגיאה בשינוי סיסמה', true); return; }
+      showMsg(msg,'הסיסמה שונתה בהצלחה',false);
+      ['currPw','newPw','confirmPw'].forEach(id => setVal(id,''));
+    } catch (e) {
+      showMsg(msg,'שגיאת רשת: ' + e.message, true);
+    }
   });
+  // Reset is intentionally disabled in the server-backed version — the button (if present in the
+  // HTML) just informs the user to edit data.json manually or contact the admin.
   document.getElementById('resetDataBtn')?.addEventListener('click', () => {
-    confirm2('איפוס מלא – כל הנתונים יאבדו!', () => { DB.reset(); alert('הנתונים אופסו. הדף יטען מחדש.'); location.reload(); });
+    alert('איפוס מלא הושבת בגרסת השרת. כדי לאפס — יש לערוך את data.json בגיטהאב.');
   });
-  // Load saved GitHub token
+  // Legacy GitHub Token UI is no longer needed (server holds the token). Hide the row if it exists.
   const ghInp = document.getElementById('ghTokenInput');
-  if (ghInp && ghToken()) ghInp.value = ghToken();
-  document.getElementById('saveGhTokenBtn')?.addEventListener('click', () => {
-    const val = document.getElementById('ghTokenInput')?.value.trim();
-    if (!val) { toast('הכנס token', 'error'); return; }
-    localStorage.setItem('gh_token', val);
-    toast('Token נשמר ✓', 'success');
-    initUnderConstructionToggle();
-  });
+  if (ghInp) {
+    const row = ghInp.closest('.settings-row') || ghInp.parentElement;
+    if (row) row.style.display = 'none';
+  }
 }
 
 // ============ BADGE ============
@@ -1904,6 +1998,9 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('adminPanel').classList.remove('hidden');
       initAdmin();
+    } else if (res.network) {
+      err.textContent = 'שגיאת רשת – לא ניתן להתחבר לשרת. בדוק חיבור אינטרנט.';
+      err.classList.remove('hidden');
     } else if (res.locked) {
       const m = Math.ceil(res.secs/60);
       err.textContent = `יותר מדי נסיונות כושלים. חשבון חסום ל-${m} דקות.`;
@@ -1924,9 +2021,25 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-function initAdmin() {
+async function initAdmin() {
+  try {
+    await DB.init();
+  } catch (e) {
+    console.error('DB init failed', e);
+    // If session died, bounce back to login
+    if (String(e.message).includes('הסשן פג')) {
+      document.getElementById('adminPanel')?.classList.add('hidden');
+      const ls = document.getElementById('loginScreen');
+      ls?.classList.remove('hidden');
+      const err = document.getElementById('loginError');
+      if (err) { err.textContent = e.message; err.classList.remove('hidden'); }
+      return;
+    }
+    alert('שגיאה בטעינת הנתונים מהשרת. נסה שוב עוד רגע.\n' + e.message);
+    return;
+  }
   initEmailJS();
-  // Start 30-min inactivity session timer
+  // Start inactivity session timer
   _startSessTimer();
   ['click','keydown','scroll','mousemove'].forEach(ev =>
     document.addEventListener(ev, _resetSessTimer, { passive:true })
@@ -1952,52 +2065,24 @@ function initAdmin() {
 }
 
 // ============ UNDER CONSTRUCTION TOGGLE ============
-const GH_REPO  = 'bot-sync-up/friedman-site';
-const GH_FILE  = 'config.js';
-function ghToken() { return localStorage.getItem('gh_token') || ''; }
-
+// Now stored in data.settings.underConstruction (persisted with the rest of the site data).
 function initUnderConstructionToggle() {
   const toggle = document.getElementById('ucToggle');
   const label  = document.getElementById('ucStatusLabel');
-  if (!toggle || !ghToken()) return;
-  fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`, {
-    headers: { Authorization: `Bearer ${ghToken()}` }
-  })
-  .then(r => r.json())
-  .then(data => {
-    const content = atob(data.content.replace(/\n/g,''));
-    const isOn = /underConstruction:\s*true/.test(content);
-    toggle.checked = isOn;
-    if (label) { label.textContent = isOn ? 'פעיל' : 'כבוי'; label.style.color = isOn ? '#e74c3c' : '#888'; }
-  })
-  .catch(() => {});
+  if (!toggle) return;
+  const d = DB.get();
+  const isOn = !!(d.settings && d.settings.underConstruction);
+  toggle.checked = isOn;
+  if (label) { label.textContent = isOn ? 'פעיל' : 'כבוי'; label.style.color = isOn ? '#e74c3c' : '#888'; }
 }
 
 function toggleUnderConstruction(enable) {
-  if (!ghToken()) { toast('הכנס GitHub Token בהגדרות תחילה', 'error'); return; }
   const label = document.getElementById('ucStatusLabel');
-  const newContent = `// Site configuration – managed via admin panel\nwindow.SITE_CONFIG = {\n  underConstruction: ${enable}\n};\n`;
-  const encoded = btoa(unescape(encodeURIComponent(newContent)));
-
-  fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`, {
-    headers: { Authorization: `Bearer ${ghToken()}` }
-  })
-  .then(r => r.json())
-  .then(data => {
-    return fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`, {
-      method: 'PUT',
-      headers: { Authorization: `Bearer ${ghToken()}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message: enable ? 'הפעלת מצב בנייה' : 'כיבוי מצב בנייה',
-        content: encoded,
-        sha: data.sha
-      })
-    });
-  })
-  .then(r => r.json())
-  .then(() => {
-    toast(enable ? '🔧 מצב בנייה הופעל – האתר יתעדכן תוך כדקה' : '✅ האתר חזר לאוויר', enable ? 'info' : 'success');
+  const d = DB.get();
+  d.settings.underConstruction = !!enable;
+  DB.save(d);
+  DB.saveNow().then(() => {
+    toast(enable ? '🔧 מצב בנייה הופעל' : '✅ האתר חזר לאוויר', enable ? 'info' : 'success');
     if (label) { label.textContent = enable ? 'פעיל' : 'כבוי'; label.style.color = enable ? '#e74c3c' : '#888'; }
-  })
-  .catch(() => toast('שגיאה בעדכון GitHub', 'error'));
+  }).catch(() => toast('שגיאה בשמירה', 'error'));
 }

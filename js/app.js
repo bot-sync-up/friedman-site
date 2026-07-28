@@ -71,119 +71,64 @@ const i18n = {
   }
 };
 
-// ============ Default Site Data ============
+// ============ Default Site Data (fallback if server unreachable) ============
 const DEFAULT_DATA = {
   settings: {
-    adminPassword: 'friedman2025',
-    heroTitle: 'יוחנן פרידמן',
-    heroSubtitle: 'ניהול אמנים',
+    heroTitle: 'יוחנן פרידמן', heroSubtitle: 'ניהול אמנים',
     heroTagline: 'הפנים של המוזיקה החסידית',
     aboutTitle: 'יוחנן פרידמן –\nמאחורי המוזיקה',
-    aboutContent: `<p>כבר למעלה מעשרים שנה, יוחנן פרידמן עומד בלב עולם המוזיקה החסידית. גדל בביתו של אדמו"ר מוקף בניגון ותפילה, יוחנן הבין מוקדם שהמוזיקה היהודית היא נשמת האומה – ושמגיעים לה מייצגים ראויים.</p>
-<p>לאחר שנים של עבודה מאחורי הקלעים עם גדולי הזמרים החסידיים, הקים יוחנן את סוכנות הניהול שלו, המאחדת תחת קורת גג אחת את הכישרונות הגדולים ביותר של הדור.</p>
-<p>היום, "יוחנן פרידמן – ניהול אמנים" היא הכתובת הראשונה לכל מי שמבקש להביא את הפנים של המוזיקה החסידית לאירוע שלו.</p>`,
-    phone: '052-711-3955',
-    email: 'mh4113633@gmail.com',
-    contractTerms: [
-      'ביטול האירוע על ידי הלקוח עד 30 יום לפני האירוע – המקדמה אינה מוחזרת.',
-      'ביטול האירוע על ידי הלקוח בפחות מ-30 יום – 50% מסכום החוזה המלא.',
-      'ביטול האירוע על ידי הלקוח בפחות מ-7 ימים – 100% מסכום החוזה המלא.',
-      'שעות ההופעה הן שעות נקיות – לא כוללות הפסקות ארוחות.',
-      'האמן יגיע לאתר האירוע לפחות 45 דקות לפני שעת תחילת ההופעה.',
-      'כל שינוי בפרטי האירוע (תאריך, מקום, שעות) מחייב הסכמה בכתב מראש.',
-      'הסכום כולל ציוד קול בסיסי. ציוד מיוחד ייגבה בנפרד בהסכמה מראש.',
-      'תשלום מלא ביום האירוע לפני תחילת ההופעה.',
-    ],
+    aboutContent: '<p>ניהול אמנים חסידיים.</p>',
+    phone: '052-711-3955', email: 'mh4113633@gmail.com',
+    contractTerms: [],
   },
-  artists: [
-    { id:1, name:'יצחק אייזיק לנדא',  category:'singer',      specialty:'זמר חסידי',  desc:'קולו החם ורב-הגוונים הפך אותו לאחד הזמרים האהובים ביותר.', photo:'', active:true, fee:'', internalNotes:'', availability:'' },
-    { id:2, name:'יחיאל שטיין',        category:'singer',      specialty:'זמר ומנגן',  desc:'ניגונים עמוקים מלב המסורת החסידית לכל אירוע.', photo:'', active:true, fee:'', internalNotes:'', availability:'' },
-    { id:3, name:'איציק אייזנשטט',     category:'singer',      specialty:'זמר חסידי',  desc:'גשר בין עולם הניגון הישן לצלילים המודרניים.', photo:'', active:true, fee:'', internalNotes:'', availability:'' },
-    { id:4, name:'עקיבא רוטמן',        category:'singer',      specialty:'זמר ופייטן', desc:'פיוטים מרגשים ביכולת ייחודית להגביה כל שמחה.', photo:'', active:true, fee:'', internalNotes:'', availability:'' },
-    { id:5, name:'מיילך בראונשטיין',   category:'singer',      specialty:'זמר חסידי',  desc:'כישרון נדיר עם הבנה עמוקה של הקהל החרדי.', photo:'', active:true, fee:'', internalNotes:'', availability:'' },
-  ],
-  musicians: [
-    { id:1, name:'ישראל ברגר',  instrument:'קלרינט',   category:'wind',      desc:'נשפן מוביל עם עשרות שנות ניסיון בכל סוגי האירועים החסידיים.', photo:'', active:true, fee:'', internalNotes:'' },
-    { id:2, name:'אלתר פיינברג', instrument:'כינור',    category:'strings',   desc:'כנר קלאסי מוכשר המביא חום ורגש לכל ניגון חסידי.', photo:'', active:true, fee:'', internalNotes:'' },
-    { id:3, name:'מנחם הנגל',   instrument:'אקורדיון', category:'keyboard',  desc:'אקורדיוניסט מסורתי בעל ניסיון עשיר, מלווה הופעות ברחבי הארץ.', photo:'', active:true, fee:'', internalNotes:'' },
-    { id:4, name:'שמעון דייטש', instrument:'תופים',    category:'percussion',desc:'מתופף מקצועי המביא אנרגיה וקצב לכל אירוע.', photo:'', active:true, fee:'', internalNotes:'' },
-  ],
-  videos: [
-    { id:1, youtubeId:'', title:'הופעה מרגשת בחתונה גדולה', artist:'יצחק אייזיק לנדא', artistIds:[], active:true },
-    { id:2, youtubeId:'', title:'ניגון בית השואבה', artist:'יחיאל שטיין', artistIds:[], active:true },
-    { id:3, youtubeId:'', title:'פיוט לשבת קודש', artist:'עקיבא רוטמן', artistIds:[], active:true },
-  ],
-  recordings: [
-    { id:1, title:'חתונה – משפחת כהן, ירושלים', date:'2025-03-15', size:'2.3 GB', driveUrl:'', desc:'הקלטה מלאה של חתונה מרגשת', artistIds:[], active:true },
-    { id:2, title:'שמחת בר מצוה – משפחת לוי', date:'2025-01-20', size:'1.8 GB', driveUrl:'', desc:'הקלטה מהחגיגה המרגשת', artistIds:[], active:true },
-  ],
-  events: [],
-  gallery: [
-    { id:1, caption:'שמחת חתונה - ירושלים', category:'events', color:'linear-gradient(135deg,#1a3060,#0f2040)', items:[] },
-    { id:2, caption:'הופעה - בני ברק',      category:'events', color:'linear-gradient(135deg,#0f2040,#1e3060)', items:[] },
-    { id:3, caption:'הקלטה בסטודיו',         category:'studio', color:'linear-gradient(135deg,#1e4060,#0a1628)', items:[] },
-    { id:4, caption:'ערב שיעור גדול',        category:'events', color:'linear-gradient(135deg,#163048,#1a3060)', items:[] },
-    { id:5, caption:'רגעי הכנה',             category:'studio', color:'linear-gradient(135deg,#182040,#1a2f50)', items:[] },
-    { id:6, caption:'שמחת בר מצוה',          category:'events', color:'linear-gradient(135deg,#0d1b3e,#163060)', items:[] },
-  ],
-  news: [
-    { id:1, title:'הופעה מרהיבה בשמחת בית השואבה – תגובות מרגשות', date:'2025-10-18', excerpt:'אלפי מתפללים נהנו מהופעה בלתי נשכחת שמשכה קהל רב מכל רחבי הארץ.', active:true },
-    { id:2, title:'אלבום חדש – "נשמה שרה" – יוצא לאור בקרוב!',    date:'2025-09-05', excerpt:'יצחק אייזיק לנדא מסכם שנתיים של עבודה עם אלבום מרגש.', active:true },
-    { id:3, title:'הזמנות לאירועי חנוכה – מהרו להבטיח מקום!',     date:'2025-08-20', excerpt:'לוח הופעות החנוכה מתמלא במהירות – צרו קשר עכשיו.', active:true },
-  ],
-  submissions: [],
-  testimonials: [
-    { id:1, name:'ר\' אברהם שטרן', role:'חתן שמח', text:'יוחנן פרידמן עשה את שמחת בננו לחוויה בלתי נשכחת. המקצועיות והאכפתיות שלו הם ממדרגה ראשונה.', active:true },
-    { id:2, name:'משה כהן', role:'בעל שמחה', text:'מרוצה ביותר. האמן הגיע בזמן, הלהיב את כל הקהל, ויוחנן טיפל בכל פרט קטן מראש.', active:true },
-    { id:3, name:'יעקב לוי', role:'מארגן אירועים', text:'עובד עם יוחנן שנים רבות. מנהל מצוין, תמיד זמין, ותמיד עומד בהבטחותיו ללא פשרות.', active:true },
-  ],
+  artists: [], musicians: [], videos: [], recordings: [], events: [],
+  gallery: [], news: [], submissions: [], testimonials: [],
 };
 
-// ============ DB ============
+// ============ DB — read-only cache for the public site. ============
+// Boot flow: DB.init() fetches /api/data once. After that DB.get() returns the cached copy
+// synchronously so the rest of the code (which was written for localStorage) works unchanged.
 const DB = {
-  key: 'yf_site_data',
-  get() {
+  _cache: null,
+  async init() {
     try {
-      const s = localStorage.getItem(this.key);
-      if (!s) return this.reset();
-      const d = JSON.parse(s);
-      if (!d.artists    || d.artists.length === 0)    d.artists    = DEFAULT_DATA.artists;
-      if (!d.musicians  || d.musicians.length === 0)  d.musicians  = DEFAULT_DATA.musicians;
-      if (!d.gallery    || d.gallery.length === 0)    d.gallery    = DEFAULT_DATA.gallery;
-      if (!d.news       || d.news.length === 0)       d.news       = DEFAULT_DATA.news;
-      if (!d.videos)     d.videos     = DEFAULT_DATA.videos;
-      if (!d.recordings) d.recordings = DEFAULT_DATA.recordings;
-      if (!d.events)     d.events     = [];
-      if (!d.settings)   d.settings   = DEFAULT_DATA.settings;
-      if (!d.submissions) d.submissions = [];
-      // Migration: add category to artists without it
-      d.artists.forEach(a => { if (!a.category) a.category = 'singer'; });
-      // Migration: add artistIds to videos/recordings without it
-      d.videos.forEach(v => { if (!v.artistIds) v.artistIds = []; });
-      d.recordings.forEach(r => { if (!r.artistIds) r.artistIds = []; });
-      // Migration: add contractTerms to settings
-      if (!d.settings.contractTerms) d.settings.contractTerms = DEFAULT_DATA.settings.contractTerms;
-      // Migration: add testimonials
-      if (!d.testimonials) d.testimonials = DEFAULT_DATA.testimonials;
-      // Migration: add audioUrl to recordings
-      d.recordings.forEach(r => { if (!r.audioUrl) r.audioUrl = ''; });
-      // Migration: convert gallery items to album format with items[]
-      d.gallery.forEach(g => {
-        if (!g.items) {
-          const item = { id: 1 };
-          if ((g.type === 'video' || g.type === 'youtube') && g.youtubeId) {
-            item.type = 'youtube'; item.youtubeId = g.youtubeId;
-          } else if (g.url) {
-            item.type = 'image'; item.url = g.url;
-          }
-          g.items = item.type ? [item] : [];
-        }
-      });
-      return d;
-    } catch(e) { return this.reset(); }
+      const r = await fetch('/api/data', { cache: 'no-store' });
+      if (r.ok) {
+        const j = await r.json();
+        this._cache = this._migrate(j);
+        return this._cache;
+      }
+    } catch (e) { console.warn('DB fetch failed', e); }
+    this._cache = this._migrate(JSON.parse(JSON.stringify(DEFAULT_DATA)));
+    return this._cache;
   },
-  save(d) { localStorage.setItem(this.key, JSON.stringify(d)); },
-  reset() { localStorage.setItem(this.key, JSON.stringify(DEFAULT_DATA)); return DEFAULT_DATA; }
+  _migrate(d) {
+    if (!d || typeof d !== 'object') d = {};
+    ['artists','musicians','videos','recordings','events','gallery','news','submissions','testimonials'].forEach(k => { if (!Array.isArray(d[k])) d[k] = []; });
+    if (!d.settings) d.settings = {};
+    d.artists.forEach(a => { if (!a.category) a.category = 'singer'; });
+    d.videos.forEach(v => { if (!v.artistIds) v.artistIds = []; });
+    d.recordings.forEach(r => { if (!r.artistIds) r.artistIds = []; if (!r.audioUrl) r.audioUrl = ''; });
+    d.gallery.forEach(g => {
+      if (!g.items) {
+        const it = {};
+        if ((g.type === 'video' || g.type === 'youtube') && g.youtubeId) { it.type = 'youtube'; it.youtubeId = g.youtubeId; it.id = 1; }
+        else if (g.url) { it.type = 'image'; it.url = g.url; it.id = 1; }
+        g.items = it.type ? [it] : [];
+      }
+    });
+    return d;
+  },
+  get() {
+    if (!this._cache) {
+      console.warn('DB.get() called before init — returning defaults');
+      return this._migrate(JSON.parse(JSON.stringify(DEFAULT_DATA)));
+    }
+    return this._cache;
+  },
+  // The public site never writes back — save() only exists so the contact form's legacy
+  // in-memory push doesn't crash if it still touches DB.
+  save(d) { this._cache = d; },
 };
 
 let currentLang = localStorage.getItem('yf_lang') || 'he';
@@ -354,7 +299,7 @@ function renderArtistsByTab(cat) {
       const card = document.createElement('div');
       card.className = 'artist-card reveal';
       card.style.setProperty('--d', `${i * 0.1}s`);
-      const hasPhoto = m.photo && m.photo.startsWith('data:');
+      const hasPhoto = !!m.photo;
       const bg = catColors[m.category] || '#1a3060';
       card.innerHTML = `
         <div class="artist-avatar" style="${hasPhoto ? '' : `background:linear-gradient(135deg,${bg},#0f2040)`}">
@@ -376,7 +321,7 @@ function renderArtistsByTab(cat) {
       const card = document.createElement('div');
       card.className = 'artist-card reveal';
       card.style.setProperty('--d', `${i * 0.1}s`);
-      const hasPhoto = a.photo && a.photo.startsWith('data:');
+      const hasPhoto = !!a.photo;
       card.innerHTML = `
         <div class="artist-avatar" style="${hasPhoto ? '' : `background:${grads[i%grads.length]}`}">
           ${hasPhoto ? `<img src="${a.photo}" alt="${a.name}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : a.name.charAt(0)}
@@ -435,7 +380,7 @@ function openArtistProfile(id, type) {
   // Find tagged recordings
   const taggedRecs = (d.recordings || []).filter(r => r.active && r.artistIds && r.artistIds.includes(id));
 
-  const hasPhoto = artist.photo && artist.photo.startsWith('data:');
+  const hasPhoto = !!artist.photo;
   const label = type === 'musician'
     ? `${artist.instrument}`
     : artist.specialty;
@@ -819,10 +764,7 @@ function initContactForm() {
 
   form.addEventListener('submit', e => {
     e.preventDefault();
-    const d   = DB.get();
     const sub = {
-      id:        Date.now(),
-      status:    'new',
       name:      document.getElementById('cName').value.trim(),
       phone:     document.getElementById('cPhone').value.trim(),
       email:     document.getElementById('cEmail').value.trim(),
@@ -831,15 +773,20 @@ function initContactForm() {
       eventDate: document.getElementById('cDate')?.value || '',
       venue:     document.getElementById('cVenue')?.value.trim() || '',
       message:   document.getElementById('cMsg').value.trim(),
-      date:      new Date().toISOString(),
-      read:      false,
     };
     if (!sub.name || !sub.phone) { alert('אנא מלא שם וטלפון'); return; }
-    d.submissions.push(sub);
-    DB.save(d);
+
     form.classList.add('hidden');
     success.classList.remove('hidden');
-    // ── שלח מייל דרך Web3Forms ──────────────────────────────
+
+    // Persist to server (goes into admin's submissions list)
+    fetch('/api/submission', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify(sub),
+    }).catch(() => {}); // fire-and-forget; the email below still serves as backup notification
+
+    // Fire the email via Web3Forms (immediate inbox notification)
     const WEB3FORMS_KEY = '70965c8e-4660-4630-9d07-a35fc74e1b29';
     if (WEB3FORMS_KEY) {
       fetch('https://api.web3forms.com/submit', {
@@ -861,7 +808,7 @@ function initContactForm() {
             `הודעה: ${sub.message || '—'}`,
           ].join('\n'),
         })
-      }).catch(() => {}); // נשמר גם ב-localStorage – המייל הוא בונוס
+      }).catch(() => {});
     }
   });
 
@@ -936,7 +883,7 @@ function obsReveal(el) {
 }
 
 // ============ Init ============
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   createStars();
   initNavbar();
   initHamburger();
@@ -947,6 +894,18 @@ document.addEventListener('DOMContentLoaded', () => {
   initLightbox();
   initGalleryFilters();
   initContactForm();
+
+  // Load site data from server before rendering data-dependent sections
+  await DB.init();
+
+  // Under-construction banner is now driven by server-side settings, not config.js
+  const d = DB.get();
+  if (d.settings && d.settings.underConstruction) {
+    const b = document.getElementById('constructionBanner');
+    if (b) b.style.display = 'flex';
+    document.body.classList.add('has-banner');
+  }
+
   initArtistTabs();
   applySettings();
   renderVideos();
