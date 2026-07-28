@@ -16,43 +16,194 @@
       "כל שינוי בפרטי האירוע (תאריך, מקום, שעות) מחייב הסכמה בכתב מראש.",
       "הסכום כולל ציוד קול בסיסי. ציוד מיוחד ייגבה בנפרד בהסכמה מראש.",
       "תשלום מלא ביום האירוע לפני תחילת ההופעה."
-    ]
+    ],
+    "adminPasswordHash": "251067043df20368424c73f1c7bfdfb2cbb6d3c63c5dbf3969be06cb54c800cd"
   },
   "artists": [
-    { "id": 1, "name": "יצחק אייזיק לנדא", "category": "singer", "specialty": "זמר חסידי", "desc": "קולו החם ורב-הגוונים.", "photo": "", "active": true },
-    { "id": 2, "name": "יחיאל שטיין", "category": "singer", "specialty": "זמר ומנגן", "desc": "ניגונים עמוקים.", "photo": "", "active": true },
-    { "id": 3, "name": "איציק אייזנשטט", "category": "singer", "specialty": "זמר חסידי", "desc": "גשר בין מסורת למודרנה.", "photo": "", "active": true },
-    { "id": 4, "name": "עקיבא רוטמן", "category": "singer", "specialty": "זמר ופייטן", "desc": "פיוטים מרגשים.", "photo": "", "active": true },
-    { "id": 5, "name": "מיילך בראונשטיין", "category": "singer", "specialty": "זמר חסידי", "desc": "כישרון נדיר.", "photo": "", "active": true }
+    {
+      "id": 1,
+      "name": "יצחק אייזיק לנדא",
+      "category": "singer",
+      "specialty": "זמר חסידי",
+      "desc": "קולו החם ורב-הגוונים.",
+      "photo": "",
+      "active": true
+    },
+    {
+      "id": 2,
+      "name": "יחיאל שטיין",
+      "category": "singer",
+      "specialty": "זמר ומנגן",
+      "desc": "ניגונים עמוקים.",
+      "photo": "",
+      "active": true
+    },
+    {
+      "id": 3,
+      "name": "איציק אייזנשטט",
+      "category": "singer",
+      "specialty": "זמר חסידי",
+      "desc": "גשר בין מסורת למודרנה.",
+      "photo": "",
+      "active": true
+    },
+    {
+      "id": 4,
+      "name": "עקיבא רוטמן",
+      "category": "singer",
+      "specialty": "זמר ופייטן",
+      "desc": "פיוטים מרגשים.",
+      "photo": "",
+      "active": true
+    },
+    {
+      "id": 5,
+      "name": "מיילך בראונשטיין",
+      "category": "singer",
+      "specialty": "זמר חסידי",
+      "desc": "כישרון נדיר.",
+      "photo": "",
+      "active": true
+    }
   ],
   "musicians": [
-    { "id": 1, "name": "ישראל ברגר", "instrument": "קלרינט", "category": "wind", "desc": "נשפן מוביל.", "photo": "", "active": true },
-    { "id": 2, "name": "אלתר פיינברג", "instrument": "כינור", "category": "strings", "desc": "כנר קלאסי.", "photo": "", "active": true },
-    { "id": 3, "name": "מנחם הנגל", "instrument": "אקורדיון", "category": "keyboard", "desc": "אקורדיוניסט.", "photo": "", "active": true },
-    { "id": 4, "name": "שמעון דייטש", "instrument": "תופים", "category": "percussion", "desc": "מתופף מקצועי.", "photo": "", "active": true }
+    {
+      "id": 1,
+      "name": "ישראל ברגר",
+      "instrument": "קלרינט",
+      "category": "wind",
+      "desc": "נשפן מוביל.",
+      "photo": "",
+      "active": true
+    },
+    {
+      "id": 2,
+      "name": "אלתר פיינברג",
+      "instrument": "כינור",
+      "category": "strings",
+      "desc": "כנר קלאסי.",
+      "photo": "",
+      "active": true
+    },
+    {
+      "id": 3,
+      "name": "מנחם הנגל",
+      "instrument": "אקורדיון",
+      "category": "keyboard",
+      "desc": "אקורדיוניסט.",
+      "photo": "",
+      "active": true
+    },
+    {
+      "id": 4,
+      "name": "שמעון דייטש",
+      "instrument": "תופים",
+      "category": "percussion",
+      "desc": "מתופף מקצועי.",
+      "photo": "",
+      "active": true
+    }
   ],
   "videos": [
-    { "id": 1, "youtubeId": "", "title": "הופעה בחתונה גדולה", "artist": "יצחק אייזיק לנדא", "artistIds": [], "active": true },
-    { "id": 2, "youtubeId": "", "title": "ניגון בית השואבה", "artist": "יחיאל שטיין", "artistIds": [], "active": true }
+    {
+      "id": 1,
+      "youtubeId": "",
+      "title": "הופעה בחתונה גדולה",
+      "artist": "יצחק אייזיק לנדא",
+      "artistIds": [],
+      "active": true
+    },
+    {
+      "id": 2,
+      "youtubeId": "",
+      "title": "ניגון בית השואבה",
+      "artist": "יחיאל שטיין",
+      "artistIds": [],
+      "active": true
+    }
   ],
   "recordings": [
-    { "id": 1, "title": "חתונה – משפחת כהן", "date": "2025-03-15", "size": "2.3 GB", "driveUrl": "", "desc": "הקלטה מלאה", "artistIds": [], "active": true, "audioUrl": "" }
+    {
+      "id": 1,
+      "title": "חתונה – משפחת כהן",
+      "date": "2025-03-15",
+      "size": "2.3 GB",
+      "driveUrl": "",
+      "desc": "הקלטה מלאה",
+      "artistIds": [],
+      "active": true,
+      "audioUrl": ""
+    }
   ],
   "events": [],
   "gallery": [
-    { "id": 1, "caption": "שמחת חתונה - ירושלים", "category": "events", "color": "linear-gradient(135deg,#1a3060,#0f2040)", "items": [] },
-    { "id": 2, "caption": "הופעה - בני ברק", "category": "events", "color": "linear-gradient(135deg,#0f2040,#1e3060)", "items": [] },
-    { "id": 3, "caption": "הקלטה בסטודיו", "category": "studio", "color": "linear-gradient(135deg,#1e4060,#0a1628)", "items": [] }
+    {
+      "id": 1,
+      "caption": "שמחת חתונה - ירושלים",
+      "category": "events",
+      "color": "linear-gradient(135deg,#1a3060,#0f2040)",
+      "items": []
+    },
+    {
+      "id": 2,
+      "caption": "הופעה - בני ברק",
+      "category": "events",
+      "color": "linear-gradient(135deg,#0f2040,#1e3060)",
+      "items": []
+    },
+    {
+      "id": 3,
+      "caption": "הקלטה בסטודיו",
+      "category": "studio",
+      "color": "linear-gradient(135deg,#1e4060,#0a1628)",
+      "items": []
+    }
   ],
   "news": [
-    { "id": 1, "title": "הופעה מרהיבה בשמחת בית השואבה", "date": "2025-10-18", "excerpt": "אלפי מתפללים נהנו.", "active": true },
-    { "id": 2, "title": "אלבום חדש – \"נשמה שרה\"", "date": "2025-09-05", "excerpt": "אלבום מרגש חדש.", "active": true },
-    { "id": 3, "title": "הזמנות לאירועי חנוכה", "date": "2025-08-20", "excerpt": "צרו קשר עכשיו.", "active": true }
+    {
+      "id": 1,
+      "title": "הופעה מרהיבה בשמחת בית השואבה",
+      "date": "2025-10-18",
+      "excerpt": "אלפי מתפללים נהנו.",
+      "active": true
+    },
+    {
+      "id": 2,
+      "title": "אלבום חדש – \"נשמה שרה\"",
+      "date": "2025-09-05",
+      "excerpt": "אלבום מרגש חדש.",
+      "active": true
+    },
+    {
+      "id": 3,
+      "title": "הזמנות לאירועי חנוכה",
+      "date": "2025-08-20",
+      "excerpt": "צרו קשר עכשיו.",
+      "active": true
+    }
   ],
   "submissions": [],
   "testimonials": [
-    { "id": 1, "name": "ר' אברהם שטרן", "role": "חתן שמח", "text": "יוחנן פרידמן עשה את שמחת בננו לחוויה בלתי נשכחת.", "active": true },
-    { "id": 2, "name": "משה כהן", "role": "בעל שמחה", "text": "מרוצה ביותר. האמן הגיע בזמן, ויוחנן טיפל בכל הפרטים.", "active": true },
-    { "id": 3, "name": "יעקב לוי", "role": "מארגן אירועים", "text": "עובד עם יוחנן שנים רבות. מנהל מצוין ואמין.", "active": true }
+    {
+      "id": 1,
+      "name": "ר' אברהם שטרן",
+      "role": "חתן שמח",
+      "text": "יוחנן פרידמן עשה את שמחת בננו לחוויה בלתי נשכחת.",
+      "active": true
+    },
+    {
+      "id": 2,
+      "name": "משה כהן",
+      "role": "בעל שמחה",
+      "text": "מרוצה ביותר. האמן הגיע בזמן, ויוחנן טיפל בכל הפרטים.",
+      "active": true
+    },
+    {
+      "id": 3,
+      "name": "יעקב לוי",
+      "role": "מארגן אירועים",
+      "text": "עובד עם יוחנן שנים רבות. מנהל מצוין ואמין.",
+      "active": true
+    }
   ]
 }
