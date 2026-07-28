@@ -124,8 +124,8 @@ export function StoreProvider({ children }) {
     if (authed && !data) loadData();
   }, [authed, data, loadData]);
 
-  const login = useCallback(async (password) => {
-    await apiLogin(password);
+  const login = useCallback(async (email, password) => {
+    await apiLogin(email, password);
     setAuthed(true);
     await loadData();
   }, [loadData]);

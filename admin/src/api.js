@@ -11,27 +11,28 @@ function authHeaders(extra) {
   return { ...(extra || {}), ...(t ? { Authorization: 'Bearer ' + t } : {}) };
 }
 
-export async function apiLogin(password) {
+export async function apiLogin(email, password) {
   const r = await fetch('/api/auth', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ password }),
+    body: JSON.stringify({ email, password }),
   });
   const j = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(j.error || 'סיסמה שגויה');
+  if (!r.ok) throw new Error(j.error || 'מייל או סיסמה שגויים');
   if (!j.token) throw new Error('לא התקבל טוקן');
   setToken(j.token);
   return j.token;
 }
 
-export async function apiChangePassword(current, next) {
+// Change password and/or the login email. Pass empty strings for fields you don't change.
+export async function apiChangeCredentials({ current, next, nextEmail }) {
   const r = await fetch('/api/auth', {
     method: 'PUT',
     headers: authHeaders({ 'Content-Type': 'application/json' }),
-    body: JSON.stringify({ current, next }),
+    body: JSON.stringify({ current, next, nextEmail }),
   });
   const j = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(j.error || 'שגיאה בשינוי סיסמה');
+  if (!r.ok) throw new Error(j.error || 'שגיאה בעדכון פרטי התחברות');
   return j;
 }
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useStore } from '../store.jsx';
-import { apiChangePassword } from '../api.js';
+import { apiChangeCredentials } from '../api.js';
 import { PageHead, Field, Toggle } from '../ui.jsx';
 
 export default function Settings() {
@@ -8,21 +8,25 @@ export default function Settings() {
   const [cur, setCur] = useState('');
   const [nw, setNw] = useState('');
   const [conf, setConf] = useState('');
+  const [newEmail, setNewEmail] = useState('');
   const [msg, setMsg] = useState(null);
   const [busy, setBusy] = useState(false);
 
   const underConstruction = !!(data.settings && data.settings.underConstruction);
+  const currentEmail = (data.settings && data.settings.adminEmail) || (data.settings && data.settings.email) || '';
 
-  async function changePw(e) {
+  async function changeCreds(e) {
     e.preventDefault();
     setMsg(null);
-    if (nw.length < 8) { setMsg({ err: true, t: 'סיסמה חדשה — לפחות 8 תווים' }); return; }
-    if (nw !== conf) { setMsg({ err: true, t: 'הסיסמאות אינן תואמות' }); return; }
+    if (!cur) { setMsg({ err: true, t: 'יש להזין סיסמה נוכחית' }); return; }
+    if (!nw && !newEmail.trim()) { setMsg({ err: true, t: 'לא צוין שינוי (סיסמה או מייל)' }); return; }
+    if (nw && nw.length < 8) { setMsg({ err: true, t: 'סיסמה חדשה — לפחות 8 תווים' }); return; }
+    if (nw && nw !== conf) { setMsg({ err: true, t: 'הסיסמאות אינן תואמות' }); return; }
     setBusy(true);
     try {
-      await apiChangePassword(cur, nw);
-      setMsg({ err: false, t: 'הסיסמה שונתה בהצלחה ✓' });
-      setCur(''); setNw(''); setConf('');
+      await apiChangeCredentials({ current: cur, next: nw, nextEmail: newEmail.trim() });
+      setMsg({ err: false, t: 'פרטי ההתחברות עודכנו ✓' });
+      setCur(''); setNw(''); setConf(''); setNewEmail('');
     } catch (e2) {
       setMsg({ err: true, t: e2.message });
     } finally { setBusy(false); }
@@ -39,14 +43,18 @@ export default function Settings() {
       <PageHead title="הגדרות" />
       <div style={{ display: 'grid', gap: 18, maxWidth: 620 }}>
         <section className="card card-pad">
-          <h3 style={{ marginTop: 0 }}><i className="fas fa-lock" style={{ color: 'var(--gold)', marginInlineEnd: 8 }} />שינוי סיסמה</h3>
-          <form onSubmit={changePw}>
-            <Field label="סיסמה נוכחית"><input type="password" className="input" value={cur} onChange={e => setCur(e.target.value)} /></Field>
+          <h3 style={{ marginTop: 0 }}><i className="fas fa-user-lock" style={{ color: 'var(--gold)', marginInlineEnd: 8 }} />פרטי התחברות</h3>
+          <p style={{ color: 'var(--text-soft)', fontSize: '.86rem', marginTop: 0 }}>
+            מייל ההתחברות הנוכחי: <strong dir="ltr">{currentEmail || '—'}</strong>
+          </p>
+          <form onSubmit={changeCreds}>
+            <Field label="סיסמה נוכחית (חובה לכל שינוי)"><input type="password" className="input" value={cur} autoComplete="current-password" onChange={e => setCur(e.target.value)} /></Field>
+            <Field label="מייל התחברות חדש (אופציונלי)"><input type="email" className="input" value={newEmail} dir="ltr" style={{ textAlign: 'right' }} onChange={e => setNewEmail(e.target.value)} placeholder={currentEmail} /></Field>
             <div className="form-2col">
-              <Field label="סיסמה חדשה"><input type="password" className="input" value={nw} onChange={e => setNw(e.target.value)} /></Field>
-              <Field label="אישור סיסמה"><input type="password" className="input" value={conf} onChange={e => setConf(e.target.value)} /></Field>
+              <Field label="סיסמה חדשה (אופציונלי)"><input type="password" className="input" value={nw} autoComplete="new-password" onChange={e => setNw(e.target.value)} /></Field>
+              <Field label="אישור סיסמה"><input type="password" className="input" value={conf} autoComplete="new-password" onChange={e => setConf(e.target.value)} /></Field>
             </div>
-            <button className="btn btn-primary" disabled={busy}><i className="fas fa-key" /> {busy ? 'משנה…' : 'שנה סיסמה'}</button>
+            <button className="btn btn-primary" disabled={busy}><i className="fas fa-key" /> {busy ? 'מעדכן…' : 'עדכן פרטי התחברות'}</button>
             {msg && <div className={'save-msg' + (msg.err ? ' err' : '')}>{msg.t}</div>}
           </form>
         </section>

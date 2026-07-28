@@ -3,17 +3,19 @@ import { useStore } from '../store.jsx';
 
 export default function Login() {
   const { login } = useStore();
+  const [email, setEmail] = useState('');
   const [pw, setPw] = useState('');
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
 
   async function submit(e) {
     e.preventDefault();
+    if (!email.trim() || !pw) { setErr('יש למלא מייל וסיסמה'); return; }
     setErr(''); setBusy(true);
     try {
-      await login(pw);
+      await login(email.trim(), pw);
     } catch (e2) {
-      setErr(e2.message || 'סיסמה שגויה');
+      setErr(e2.message || 'מייל או סיסמה שגויים');
     } finally { setBusy(false); }
   }
 
@@ -25,8 +27,13 @@ export default function Login() {
         <p className="login-sub">מערכת ניהול האתר</p>
         {err && <div className="login-err">{err}</div>}
         <div className="field">
+          <label>מייל</label>
+          <input type="email" className="input" value={email} autoFocus autoComplete="username"
+            onChange={e => setEmail(e.target.value)} placeholder="you@example.com" dir="ltr" style={{ textAlign: 'right' }} />
+        </div>
+        <div className="field">
           <label>סיסמה</label>
-          <input type="password" className="input" value={pw} autoFocus
+          <input type="password" className="input" value={pw} autoComplete="current-password"
             onChange={e => setPw(e.target.value)} placeholder="הכנס סיסמה…" />
         </div>
         <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} disabled={busy}>

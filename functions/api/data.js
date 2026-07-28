@@ -11,6 +11,7 @@ function sanitize(data) {
   if (d.settings) {
     delete d.settings.adminPassword;
     delete d.settings.adminPasswordHash;
+    delete d.settings.adminEmail;
   }
   delete d.submissions;
   // Strip internal fields the public shouldn't see
