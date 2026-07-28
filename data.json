@@ -64,13 +64,6 @@
       "desc": "כישרון נדיר.",
       "photo": "",
       "active": true
-    },
-    {
-      "id": 999999001,
-      "name": "__WRITETEST__",
-      "category": "singer",
-      "specialty": "test",
-      "active": false
     }
   ],
   "musicians": [
