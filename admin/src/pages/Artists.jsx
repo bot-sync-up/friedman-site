@@ -11,6 +11,7 @@ export default function Artists({ category }) {
   const [confirm, confirmNode] = useConfirm();
 
   const label = category === 'singer' ? 'זמר' : 'קלידן';
+  const plural = category === 'singer' ? 'זמרים' : 'קלידנים';
   const list = (data.artists || []).filter(a => a.category === category);
 
   function openNew() { setEditing({ ...BLANK, category }); }
@@ -44,11 +45,11 @@ export default function Artists({ category }) {
 
   return (
     <div>
-      <PageHead title={label + 'ים'} sub={`${list.length} ${label}ים`}>
+      <PageHead title={plural} sub={`${list.length} ${plural}`}>
         <button className="btn btn-primary" onClick={openNew}><i className="fas fa-plus" /> הוסף {label}</button>
       </PageHead>
 
-      {!list.length ? <Empty icon="fas fa-microphone-lines">אין {label}ים עדיין</Empty> : (
+      {!list.length ? <Empty icon="fas fa-microphone-lines">אין {plural} עדיין</Empty> : (
         <div className="list">
           {list.map(a => (
             <div key={a.id} className="list-item">
