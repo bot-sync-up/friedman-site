@@ -395,6 +395,64 @@ tbody tr:hover { background: var(--surface-2); }
 .cal-dot.pending { background: var(--amber); }
 
 /* ============================================================
+   POLISH
+   ============================================================ */
+/* Login card gold top accent */
+.login-card { overflow: hidden; }
+.login-card::before {
+  content: ''; position: absolute; top: 0; right: 0; left: 0; height: 4px;
+  background: linear-gradient(90deg, var(--gold-soft), var(--gold), var(--gold-soft));
+}
+.login-wrap::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(circle at center, rgba(255,255,255,.5) 0, transparent 1.2px);
+  background-size: 42px 42px; opacity: .05;
+}
+
+/* Stat cards: hover lift + gold side accent */
+.stat { position: relative; overflow: hidden; transition: transform .2s var(--ease, cubic-bezier(.22,.61,.36,1)), box-shadow .2s; }
+.stat::before {
+  content: ''; position: absolute; top: 0; bottom: 0; right: 0; width: 3px;
+  background: linear-gradient(180deg, var(--gold), var(--gold-soft)); opacity: 0; transition: opacity .2s;
+}
+.stat:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.stat:hover::before { opacity: 1; }
+
+/* Sidebar active: gold indicator bar */
+.sb-item { position: relative; }
+.sb-item.active::before {
+  content: ''; position: absolute; right: 0; top: 8px; bottom: 8px; width: 3px;
+  border-radius: 3px; background: var(--gold);
+}
+
+/* List item hover: subtle gold left edge */
+.list-item { position: relative; overflow: hidden; }
+.list-item::after {
+  content: ''; position: absolute; top: 0; bottom: 0; right: 0; width: 3px;
+  background: var(--gold); transform: scaleY(0); transition: transform .22s var(--ease, ease);
+}
+.list-item:hover::after { transform: scaleY(1); }
+
+/* Buttons: smoother */
+.btn { transition: transform .16s cubic-bezier(.22,.61,.36,1), box-shadow .2s, background .18s, filter .18s; }
+.btn-primary:hover, .btn-gold:hover { transform: translateY(-1px); }
+
+/* Gallery card hover */
+.gallery-card { transition: transform .25s cubic-bezier(.22,.61,.36,1), box-shadow .25s; }
+.gallery-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+.gallery-card .thumb img { transition: transform .3s ease; }
+.gallery-card:hover .thumb img { transform: scale(1.05); }
+
+/* Empty state icon subtle float */
+.empty i { animation: floaty 3.5s ease-in-out infinite; }
+@keyframes floaty { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-6px);} }
+
+@media (prefers-reduced-motion: reduce) {
+  .stat:hover, .btn-primary:hover, .btn-gold:hover, .gallery-card:hover { transform: none; }
+  .empty i { animation: none; }
+}
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 860px) {

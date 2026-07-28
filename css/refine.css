@@ -1,0 +1,131 @@
+/* =============================================================
+   Refinement layer (loaded after style.css) — typography + polish
+   Additive only: colors, shadows, hover, spacing. No layout rewrites.
+   ============================================================= */
+
+:root {
+  --ease-out: cubic-bezier(.22, .61, .36, 1);
+  --gold-grad: linear-gradient(135deg, #d9bc63, #c9a84c 55%, #a9852f);
+}
+
+/* ---------- Typography ---------- */
+body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; letter-spacing: .1px; }
+.section-title, .hero-title, .footer-logo-main, .about-text h3 {
+  font-family: 'Frank Ruhl Libre', 'Heebo', serif;
+  letter-spacing: -.3px;
+}
+.section-title { line-height: 1.15; }
+.section-desc { line-height: 1.7; }
+
+/* Gold accent under section titles */
+.section-header { position: relative; }
+.section-title::after {
+  content: '';
+  display: block;
+  width: 56px; height: 3px;
+  margin: 16px auto 0;
+  border-radius: 3px;
+  background: var(--gold-grad);
+}
+
+/* Section tag pill refinement */
+.section-tag {
+  display: inline-block;
+  padding: 5px 16px;
+  border-radius: 999px;
+  background: rgba(201,168,76,.12);
+  border: 1px solid rgba(201,168,76,.28);
+  letter-spacing: 1.5px;
+}
+
+/* ---------- Navbar: glass ---------- */
+.navbar.scrolled {
+  backdrop-filter: saturate(140%) blur(14px);
+  -webkit-backdrop-filter: saturate(140%) blur(14px);
+  box-shadow: 0 6px 30px rgba(8,18,42,.16);
+}
+
+/* ---------- Hero depth ---------- */
+.hero-title {
+  background: linear-gradient(180deg, #ffffff 30%, #e7ecf6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 20px rgba(201,168,76,.15));
+}
+.hero-badge {
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(201,168,76,.35) !important;
+}
+
+/* ---------- Buttons ---------- */
+.btn { transition: transform .18s var(--ease-out), box-shadow .25s var(--ease-out), background .25s; letter-spacing: .3px; }
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: translateY(0); }
+.btn-gold { background: var(--gold-grad); box-shadow: 0 8px 22px rgba(201,168,76,.32); }
+.btn-gold:hover { box-shadow: 0 12px 30px rgba(201,168,76,.42); }
+.btn-navy { box-shadow: 0 8px 22px rgba(8,18,42,.28); }
+.btn-outline { transition: transform .18s var(--ease-out), background .25s, color .25s, border-color .25s; }
+
+/* ---------- Cards: unified elevation + hover lift ---------- */
+.artist-card, .video-card, .news-card, .gallery-item, .recording-card, .testimonial-card {
+  transition: transform .3s var(--ease-out), box-shadow .3s var(--ease-out), border-color .3s;
+  will-change: transform;
+}
+.artist-card:hover, .video-card:hover, .news-card:hover, .recording-card:hover, .testimonial-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 22px 48px rgba(8,18,42,.16);
+}
+.gallery-item:hover { transform: translateY(-4px) scale(1.012); box-shadow: 0 24px 50px rgba(8,18,42,.28); }
+
+/* Gold top-accent that grows on hover for artist/news/recording cards */
+.artist-card, .news-card, .recording-card { position: relative; overflow: hidden; }
+.artist-card::before, .news-card::before, .recording-card::before {
+  content: '';
+  position: absolute; top: 0; right: 0; left: 0; height: 3px;
+  background: var(--gold-grad);
+  transform: scaleX(0); transform-origin: center;
+  transition: transform .35s var(--ease-out);
+}
+.artist-card:hover::before, .news-card:hover::before, .recording-card:hover::before { transform: scaleX(1); }
+
+/* ---------- Artist avatar polish ---------- */
+.artist-avatar { box-shadow: 0 8px 24px rgba(8,18,42,.22); transition: transform .3s var(--ease-out); }
+.artist-card:hover .artist-avatar { transform: scale(1.05); }
+
+/* ---------- Filter / tab chips ---------- */
+.filter-btn, .artist-tab { transition: all .22s var(--ease-out); }
+.filter-btn.active, .artist-tab.active {
+  box-shadow: 0 6px 18px rgba(201,168,76,.3);
+}
+
+/* ---------- Forms ---------- */
+.form-group input, .form-group select, .form-group textarea,
+.contact-form input, .contact-form select, .contact-form textarea {
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus,
+.contact-form input:focus, .contact-form select:focus, .contact-form textarea:focus {
+  box-shadow: 0 0 0 3px rgba(201,168,76,.16);
+}
+
+/* ---------- Section rhythm ---------- */
+.section-header { margin-bottom: 52px; }
+
+/* ---------- Footer ---------- */
+.footer-logo-main { letter-spacing: -.2px; }
+
+/* ---------- Selection ---------- */
+::selection { background: var(--gold); color: #08122a; }
+
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar { width: 12px; }
+::-webkit-scrollbar-track { background: var(--cream-dark); }
+::-webkit-scrollbar-thumb { background: #c3b48f; border-radius: 8px; border: 3px solid var(--cream-dark); }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .btn:hover, .artist-card:hover, .video-card:hover, .news-card:hover,
+  .recording-card:hover, .testimonial-card:hover, .gallery-item:hover { transform: none; }
+}
