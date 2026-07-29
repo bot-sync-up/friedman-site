@@ -33,11 +33,12 @@
     {
       "id": 2,
       "name": "יחיאל שטיין",
-      "category": "singer",
-      "specialty": "זמר ומנגן",
+      "category": "keyboardist",
+      "specialty": "",
       "desc": "ניגונים עמוקים.",
       "photo": "",
-      "active": true
+      "active": true,
+      "fee": "4200"
     },
     {
       "id": 3,
