@@ -43,11 +43,12 @@
     {
       "id": 3,
       "name": "איציק אייזנשטט",
-      "category": "singer",
-      "specialty": "זמר חסידי",
-      "desc": "גשר בין מסורת למודרנה.",
+      "category": "keyboardist",
+      "specialty": "",
+      "desc": "גשר בין מסורת למודרני.",
       "photo": "",
-      "active": true
+      "active": true,
+      "fee": "6000"
     },
     {
       "id": 4,
