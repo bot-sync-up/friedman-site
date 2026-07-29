@@ -136,7 +136,51 @@
       "audioUrl": ""
     }
   ],
-  "events": [],
+  "events": [
+    {
+      "clientName": "מני",
+      "clientPhone": "023333333",
+      "clientEmail": "",
+      "clientAddress": "",
+      "eventType": "חתונה",
+      "date": "2026-09-09",
+      "startTime": "16:30",
+      "endTime": "22:15",
+      "venue": "",
+      "city": "",
+      "status": "confirmed",
+      "performers": [
+        {
+          "type": "singer",
+          "artistId": null,
+          "name": "יצחק אייזיק לנדא",
+          "fee": "60000",
+          "hours": "6",
+          "chuppah": false,
+          "chuppahPrice": "",
+          "notes": ""
+        },
+        {
+          "type": "keyboardist",
+          "artistId": null,
+          "name": "ע97ויןםח",
+          "fee": "100000",
+          "hours": 4,
+          "chuppah": true,
+          "chuppahPrice": "800",
+          "notes": ""
+        }
+      ],
+      "depositAmount": "3000",
+      "depositDeadline": "",
+      "depositReceived": false,
+      "depositReceivedDate": "",
+      "notes": "",
+      "artistName": "יצחק אייזיק לנדא",
+      "basePrice": 160000,
+      "id": 1785319135953
+    }
+  ],
   "gallery": [
     {
       "id": 1,
