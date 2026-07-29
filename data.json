@@ -65,6 +65,20 @@
       "desc": "כישרון נדיר.",
       "photo": "",
       "active": true
+    },
+    {
+      "name": "מנדי ברנדווין",
+      "category": "keyboardist",
+      "specialty": "",
+      "desc": "",
+      "active": true,
+      "photo": "",
+      "fee": "6000",
+      "availability": "",
+      "phone": "",
+      "email": "",
+      "internalNotes": "",
+      "id": 1785319257403
     }
   ],
   "musicians": [
