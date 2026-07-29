@@ -179,6 +179,39 @@
       "artistName": "יצחק אייזיק לנדא",
       "basePrice": 160000,
       "id": 1785319135953
+    },
+    {
+      "clientName": "9897א8עטויח",
+      "clientPhone": "028888888",
+      "clientEmail": "",
+      "clientAddress": "",
+      "eventType": "חתונה",
+      "date": "2026-08-05",
+      "startTime": "19:20",
+      "endTime": "12:00",
+      "venue": "",
+      "city": "",
+      "status": "confirmed",
+      "performers": [
+        {
+          "type": "musician",
+          "artistId": null,
+          "name": "גכעיח",
+          "fee": "2500",
+          "hours": 4,
+          "chuppah": false,
+          "chuppahPrice": "",
+          "notes": ""
+        }
+      ],
+      "depositAmount": "1000",
+      "depositDeadline": "",
+      "depositReceived": false,
+      "depositReceivedDate": "",
+      "notes": "",
+      "artistName": "גכעיח",
+      "basePrice": 2500,
+      "id": 1785319198653
     }
   ],
   "gallery": [
